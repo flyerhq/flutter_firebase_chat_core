@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
@@ -51,8 +52,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _error = false;
+  bool _initialized = false;
   int _counter = 0;
   Calculator _calculator = Calculator();
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -65,8 +74,29 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void initializeFlutterFire() async {
+    try {
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_error) {
+      return Container();
+    }
+
+    if (!_initialized) {
+      return Container();
+    }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //

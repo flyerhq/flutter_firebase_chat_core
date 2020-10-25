@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "572676928956",
+    "firebase_url": "https://flyer-chat.firebaseio.com",
+    "project_id": "flyer-chat",
+    "storage_bucket": "flyer-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572676928956:android:ef56c918243f582b8967b9",
+        "android_client_info": {
+          "package_name": "chat.flyer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572676928956-2ijh2fq5i2fcec7nbfh73ocqh0aovptn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg9YGIWXt_4VxIfX5jrhsjf5wuiGj6gBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572676928956-2ijh2fq5i2fcec7nbfh73ocqh0aovptn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "572676928956-rejcrre2n0q76pcespufrmrbls8vc592.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "chat.flyer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
