@@ -10,6 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cloud_firestore: ^0.14.4
+  firebase_auth: ^0.18.4
+  flutter_chat_types: ^0.0.1
+  meta: ^1.2.4
 
 dev_dependencies:
   flutter_test:
