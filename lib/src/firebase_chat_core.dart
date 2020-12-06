@@ -43,12 +43,13 @@ class FirebaseChatCore {
     if (firebaseUser == null) {
       return Stream<List<types.User>>.empty();
     }
+
     return FirebaseFirestore.instance
         .collection('users')
         .snapshots()
         .map((query) {
       List<types.User> newUsers = [];
-      query.docs.map((doc) {
+      query.docs.forEach((doc) {
         if (firebaseUser.uid == doc.id) return;
         newUsers.add(processUserDocument(doc));
       });
