@@ -40,14 +40,19 @@ class FirebaseChatCore {
   }
 
   Stream<List<types.User>> users() {
+    if (firebaseUser == null) {
+      return Stream<List<types.User>>.empty();
+    }
     return FirebaseFirestore.instance
         .collection('users')
         .snapshots()
         .map((query) {
-      return query.docs.map((doc) {
+      List<types.User> newUsers = [];
+      query.docs.map((doc) {
         if (firebaseUser.uid == doc.id) return;
-        processUserDocument(doc);
-      }).toList();
+        newUsers.add(processUserDocument(doc));
+      });
+      return newUsers;
     });
   }
 }
