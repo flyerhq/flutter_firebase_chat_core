@@ -38,4 +38,16 @@ class FirebaseChatCore {
         .snapshots()
         .asyncMap((query) => processRoomsQuery(firebaseUser, query));
   }
+
+  Stream<List<types.User>> users() {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .snapshots()
+        .map((query) {
+      return query.docs.map((doc) {
+        if (firebaseUser.uid == doc.id) return;
+        processUserDocument(doc);
+      }).toList();
+    });
+  }
 }
