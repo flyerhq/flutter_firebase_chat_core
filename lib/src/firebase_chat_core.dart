@@ -39,6 +39,18 @@ class FirebaseChatCore {
         .asyncMap((query) => processRoomsQuery(firebaseUser, query));
   }
 
+  void sendMessage(types.Message message, String roomId) async {
+    if (firebaseUser == null) return;
+
+    final messageMap = message.toJson();
+    messageMap.removeWhere((key, value) => key == 'id');
+    messageMap['timestamp'] = FieldValue.serverTimestamp();
+
+    await FirebaseFirestore.instance
+        .collection('rooms/$roomId/messages')
+        .add(messageMap);
+  }
+
   Stream<List<types.User>> users() {
     if (firebaseUser == null) {
       return Stream<List<types.User>>.empty();
