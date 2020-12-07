@@ -22,22 +22,18 @@ class ChatPage extends StatelessWidget {
         stream: FirebaseChatCore.instance.messages(roomId),
         initialData: [],
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Chat(
-              messages: snapshot.data,
-              onSendPressed: (message) => FirebaseChatCore.instance.sendMessage(
-                message,
-                roomId,
-              ),
-              user: types.User(
-                firstName: 'Alex',
-                id: FirebaseChatCore.instance.firebaseUser.uid,
-                lastName: 'Demchenko',
-              ),
-            );
-          } else {
-            return Container();
-          }
+          return Chat(
+            messages: snapshot.data ?? [],
+            onSendPressed: (message) => FirebaseChatCore.instance.sendMessage(
+              message,
+              roomId,
+            ),
+            user: types.User(
+              firstName: 'Alex',
+              id: FirebaseChatCore.instance.firebaseUser.uid,
+              lastName: 'Demchenko',
+            ),
+          );
         },
       ),
     );

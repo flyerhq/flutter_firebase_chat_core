@@ -25,7 +25,7 @@ class FirebaseChatCore {
       return query.docs.map((doc) {
         Map<String, dynamic> data = doc.data();
         data['id'] = doc.id;
-        data['timestamp'] = data['timestamp'].seconds;
+        data['timestamp'] = data['timestamp']?.seconds;
         return types.Message.fromJson(data);
       }).toList();
     });
