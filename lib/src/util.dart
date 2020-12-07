@@ -1,75 +1,69 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/src/models/room.dart';
+import 'package:meta/meta.dart';
 
-import '../flutter_firebase_chat_core.dart';
+Future<Room> createRoom({
+  @required auth.User firebaseUser,
+  @required types.User otherUser,
+}) async {
+  final query = await FirebaseFirestore.instance
+      .collection('rooms')
+      .where('userIds', arrayContains: firebaseUser.uid)
+      .get();
 
-class CreateChatData {
-  const CreateChatData({
-    @required this.otherUser,
+  final rooms = await processRoomsQuery(firebaseUser, query);
+
+  final existingRoom = rooms.firstWhere((room) {
+    if (room.isGroup) return false;
+
+    final userIds = room.users.map((u) => u.id);
+    return (userIds.contains(firebaseUser.uid) &&
+        userIds.contains(otherUser.id));
   });
 
-  final types.User otherUser;
-}
-
-class CreateGroupData {
-  const CreateGroupData({
-    this.imageUrl,
-    @required this.name,
-    @required this.users,
-  });
-
-  final String imageUrl;
-  final String name;
-  final List<types.User> users;
-}
-
-Future<Room> createRoom(auth.User firebaseUser, dynamic roomData) async {
-  if (roomData is CreateChatData) {
-    final query = await FirebaseFirestore.instance
-        .collection('rooms')
-        .where('userIds', arrayContains: firebaseUser.uid)
-        .get();
-
-    final rooms = await processRoomsQuery(firebaseUser, query);
-
-    final existingRoom = rooms.firstWhere((room) {
-      if (room.isGroup) return false;
-
-      final userIds = room.users.map((u) => u.id);
-      return (userIds.contains(firebaseUser.uid) &&
-          userIds.contains(roomData.otherUser.id));
-    });
-
-    if (existingRoom != null) {
-      return existingRoom;
-    }
+  if (existingRoom != null) {
+    return existingRoom;
   }
 
   final currentUser = await fetchUser(firebaseUser.uid);
+  final users = [currentUser, otherUser];
 
-  final imageUrl = (roomData is CreateChatData) ? null : roomData.imageUrl;
-  final isGroup = (roomData is CreateGroupData);
-  final name = (roomData is CreateChatData) ? null : roomData.name;
-  final users = (roomData is CreateChatData)
-      ? [currentUser, roomData.otherUser]
-      : [currentUser] + roomData.users.map((u) => u);
+  final room = await FirebaseFirestore.instance.collection('rooms').add({
+    'isGroup': false,
+    'userIds': users.map((u) => u.id),
+  });
+
+  return Room(
+    id: room.id,
+    isGroup: false,
+    users: users,
+  );
+}
+
+Future<Room> createGroupRoom({
+  @required auth.User firebaseUser,
+  String imageUrl,
+  @required String name,
+  @required List<types.User> users,
+}) async {
+  final currentUser = await fetchUser(firebaseUser.uid);
+  final roomUsers = [currentUser] + users;
 
   final room = await FirebaseFirestore.instance.collection('rooms').add({
     'imageUrl': imageUrl,
-    'isGroup': isGroup,
-    'userIds': users.map((u) => u.id),
+    'isGroup': true,
+    'userIds': roomUsers.map((u) => u.id),
     'name': name,
   });
 
-  return new Room(
+  return Room(
     id: room.id,
-    isGroup: isGroup,
-    users: users,
-    name: name,
+    isGroup: true,
+    users: roomUsers,
     imageUrl: imageUrl,
+    name: name,
   );
 }
 
