@@ -25,7 +25,10 @@ class ChatPage extends StatelessWidget {
           if (snapshot.hasData) {
             return Chat(
               messages: snapshot.data,
-              onSendPressed: (message) {},
+              onSendPressed: (message) => FirebaseChatCore.instance.sendMessage(
+                message,
+                roomId,
+              ),
               user: types.User(
                 firstName: 'Alex',
                 id: FirebaseChatCore.instance.firebaseUser.uid,
