@@ -86,7 +86,7 @@ class _RoomsPageState extends State<RoomsPage> {
         title: Text(widget.title),
       ),
       body: _user != null
-          ? StreamBuilder(
+          ? StreamBuilder<List<Room>>(
               stream: FirebaseChatCore.instance.rooms(),
               initialData: [],
               builder: (context, snapshot) {

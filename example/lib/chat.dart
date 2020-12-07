@@ -6,7 +6,7 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 class ChatPage extends StatelessWidget {
   const ChatPage({
     Key key,
-    this.roomId,
+    @required this.roomId,
   })  : assert(roomId != null),
         super(key: key);
 
@@ -18,7 +18,7 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chat'),
       ),
-      body: StreamBuilder(
+      body: StreamBuilder<List<types.Message>>(
         stream: FirebaseChatCore.instance.messages(roomId),
         initialData: [],
         builder: (context, snapshot) {
