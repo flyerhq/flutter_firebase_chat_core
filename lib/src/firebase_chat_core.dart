@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/src/models/room.dart';
 import 'package:flutter_firebase_chat_core/src/util.dart';
+import 'package:meta/meta.dart';
 
 class FirebaseChatCore {
   User firebaseUser = FirebaseAuth.instance.currentUser;
@@ -15,6 +16,71 @@ class FirebaseChatCore {
 
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
+
+  Future<Room> createRoom({
+    @required types.User otherUser,
+  }) async {
+    if (firebaseUser == null) return Future.error('No firebase user');
+
+    final query = await FirebaseFirestore.instance
+        .collection('rooms')
+        .where('userIds', arrayContains: firebaseUser.uid)
+        .get();
+
+    final rooms = await processRoomsQuery(firebaseUser, query);
+
+    final existingRoom = rooms.firstWhere((room) {
+      if (room.isGroup) return false;
+
+      final userIds = room.users.map((u) => u.id);
+      return (userIds.contains(firebaseUser.uid) &&
+          userIds.contains(otherUser.id));
+    });
+
+    if (existingRoom != null) {
+      return existingRoom;
+    }
+
+    final currentUser = await fetchUser(firebaseUser.uid);
+    final users = [currentUser, otherUser];
+
+    final room = await FirebaseFirestore.instance.collection('rooms').add({
+      'isGroup': false,
+      'userIds': users.map((u) => u.id),
+    });
+
+    return Room(
+      id: room.id,
+      isGroup: false,
+      users: users,
+    );
+  }
+
+  Future<Room> createGroupRoom({
+    String imageUrl,
+    @required String name,
+    @required List<types.User> users,
+  }) async {
+    if (firebaseUser == null) return Future.error('No firebase user');
+
+    final currentUser = await fetchUser(firebaseUser.uid);
+    final roomUsers = [currentUser] + users;
+
+    final room = await FirebaseFirestore.instance.collection('rooms').add({
+      'imageUrl': imageUrl,
+      'isGroup': true,
+      'userIds': roomUsers.map((u) => u.id),
+      'name': name,
+    });
+
+    return Room(
+      id: room.id,
+      isGroup: true,
+      users: roomUsers,
+      imageUrl: imageUrl,
+      name: name,
+    );
+  }
 
   Stream<List<types.Message>> messages(String roomId) {
     return FirebaseFirestore.instance
