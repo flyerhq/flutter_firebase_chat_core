@@ -1,5 +1,6 @@
 import 'package:example/chat.dart';
 import 'package:example/login.dart';
+import 'package:example/users.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,16 @@ class _RoomsPageState extends State<RoomsPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _user == null ? null : () {},
+            onPressed: _user == null
+                ? null
+                : () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        fullscreenDialog: true,
+                        builder: (context) => UsersPage(),
+                      ),
+                    );
+                  },
           ),
         ],
         leading: IconButton(
@@ -109,7 +119,6 @@ class _RoomsPageState extends State<RoomsPage> {
 
                 return ListView.builder(
                   itemCount: snapshot.data.length,
-                  padding: EdgeInsets.zero,
                   itemBuilder: (context, index) {
                     final Room room = snapshot.data[index];
 
