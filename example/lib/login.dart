@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -119,11 +119,11 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 10),
               FlatButton(
                 onPressed: _handleLogin,
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
               FlatButton(
                 onPressed: () {},
-                child: Text('Register'),
+                child: const Text('Register'),
               ),
             ],
           ),

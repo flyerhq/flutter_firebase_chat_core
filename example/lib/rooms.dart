@@ -81,7 +81,7 @@ class _RoomsPageState extends State<RoomsPage> {
           icon: const Icon(Icons.logout),
           onPressed: _user != null ? logout : null,
         ),
-        title: Text('Rooms'),
+        title: const Text('Rooms'),
       ),
       body: _user != null
           ? StreamBuilder<List<Room>>(
