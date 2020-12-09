@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 class RoomsPage extends StatefulWidget {
-  RoomsPage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  RoomsPage({Key key}) : super(key: key);
 
   @override
   _RoomsPageState createState() => _RoomsPageState();
@@ -83,7 +81,7 @@ class _RoomsPageState extends State<RoomsPage> {
           icon: const Icon(Icons.logout),
           onPressed: _user != null ? logout : null,
         ),
-        title: Text(widget.title),
+        title: Text('Rooms'),
       ),
       body: _user != null
           ? StreamBuilder<List<Room>>(
