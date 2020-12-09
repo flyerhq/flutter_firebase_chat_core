@@ -17,10 +17,8 @@ class FirebaseChatCore {
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
 
-  Future<Room> createRoom({
-    @required types.User otherUser,
-  }) async {
-    if (firebaseUser == null) return Future.error('No firebase user');
+  Future<Room> createRoom(types.User otherUser) async {
+    if (firebaseUser == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
         .collection('rooms')
@@ -61,7 +59,7 @@ class FirebaseChatCore {
     @required String name,
     @required List<types.User> users,
   }) async {
-    if (firebaseUser == null) return Future.error('No firebase user');
+    if (firebaseUser == null) return Future.error('User does not exist');
 
     final currentUser = await fetchUser(firebaseUser.uid);
     final roomUsers = [currentUser] + users;
