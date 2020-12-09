@@ -17,6 +17,32 @@ class FirebaseChatCore {
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
 
+  Future<Room> createGroupRoom({
+    String imageUrl,
+    @required String name,
+    @required List<types.User> users,
+  }) async {
+    if (firebaseUser == null) return Future.error('User does not exist');
+
+    final currentUser = await fetchUser(firebaseUser.uid);
+    final roomUsers = [currentUser] + users;
+
+    final room = await FirebaseFirestore.instance.collection('rooms').add({
+      'imageUrl': imageUrl,
+      'isGroup': true,
+      'name': name,
+      'userIds': roomUsers.map((u) => u.id).toList(),
+    });
+
+    return Room(
+      id: room.id,
+      isGroup: true,
+      users: roomUsers,
+      imageUrl: imageUrl,
+      name: name,
+    );
+  }
+
   Future<Room> createRoom(types.User otherUser) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
@@ -33,7 +59,7 @@ class FirebaseChatCore {
       final userIds = room.users.map((u) => u.id);
       return (userIds.contains(firebaseUser.uid) &&
           userIds.contains(otherUser.id));
-    });
+    }, orElse: () => null);
 
     if (existingRoom != null) {
       return existingRoom;
@@ -43,8 +69,10 @@ class FirebaseChatCore {
     final users = [currentUser, otherUser];
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
+      'imageUrl': null,
       'isGroup': false,
-      'userIds': users.map((u) => u.id),
+      'name': null,
+      'userIds': users.map((u) => u.id).toList(),
     });
 
     return Room(
@@ -54,30 +82,12 @@ class FirebaseChatCore {
     );
   }
 
-  Future<Room> createGroupRoom({
-    String imageUrl,
-    @required String name,
-    @required List<types.User> users,
-  }) async {
-    if (firebaseUser == null) return Future.error('User does not exist');
-
-    final currentUser = await fetchUser(firebaseUser.uid);
-    final roomUsers = [currentUser] + users;
-
-    final room = await FirebaseFirestore.instance.collection('rooms').add({
-      'imageUrl': imageUrl,
-      'isGroup': true,
-      'userIds': roomUsers.map((u) => u.id),
-      'name': name,
+  Future<void> createUserInFirestore(types.User user) async {
+    await FirebaseFirestore.instance.collection('users').doc(user.id).set({
+      'avatarUrl': user.avatarUrl,
+      'firstName': user.firstName,
+      'lastName': user.lastName,
     });
-
-    return Room(
-      id: room.id,
-      isGroup: true,
-      users: roomUsers,
-      imageUrl: imageUrl,
-      name: name,
-    );
   }
 
   Stream<List<types.Message>> messages(String roomId) {

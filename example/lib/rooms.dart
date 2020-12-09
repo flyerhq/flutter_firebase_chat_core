@@ -1,7 +1,7 @@
 import 'package:example/chat.dart';
 import 'package:example/login.dart';
 import 'package:example/users.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
@@ -16,7 +16,7 @@ class RoomsPage extends StatefulWidget {
 class _RoomsPageState extends State<RoomsPage> {
   bool _error = false;
   bool _initialized = false;
-  auth.User _user;
+  User _user;
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _RoomsPageState extends State<RoomsPage> {
   void initializeFlutterFire() async {
     try {
       await Firebase.initializeApp();
-      auth.FirebaseAuth.instance.authStateChanges().listen((auth.User user) {
+      FirebaseAuth.instance.authStateChanges().listen((User user) {
         setState(() {
           _user = user;
         });
@@ -43,7 +43,7 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   void logout() async {
-    await auth.FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signOut();
   }
 
   @override

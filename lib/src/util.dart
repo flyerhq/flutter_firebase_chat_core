@@ -1,15 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/src/models/room.dart';
-
-void createUserInFirestore(types.User user) async {
-  await FirebaseFirestore.instance.collection('users').doc(user.id).set({
-    'avatarUrl': user.avatarUrl,
-    'firstName': user.firstName,
-    'lastName': user.lastName,
-  });
-}
 
 Future<types.User> fetchUser(String userId) async {
   final doc =
@@ -19,7 +11,7 @@ Future<types.User> fetchUser(String userId) async {
 }
 
 Future<List<Room>> processRoomsQuery(
-    auth.User firebaseUser, QuerySnapshot query) async {
+    User firebaseUser, QuerySnapshot query) async {
   final futures = query.docs.map((doc) async {
     String imageUrl = doc.get('imageUrl');
     final bool isGroup = doc.get('isGroup');
