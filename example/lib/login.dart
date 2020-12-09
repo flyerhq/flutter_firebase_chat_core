@@ -1,5 +1,5 @@
 import 'dart:io' show Platform;
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,49 +11,69 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _loggingIn = false;
+  FocusNode _focusNode;
   String _password = 'Qawsed1-';
+  TextEditingController _passwordController;
   String _username =
       Platform.isIOS ? 'dexter.crona@gmail.com' : 'ofelia84@hotmail.com';
-
-  final _focus = FocusNode();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  TextEditingController _usernameController;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
+    _passwordController = TextEditingController(text: _password);
+    _usernameController = TextEditingController(text: _username);
   }
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _focusNode.dispose();
     _passwordController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
-  void _handleLogin() async {
+  void _login() async {
+    FocusScope.of(context).unfocus();
+
     setState(() {
       _loggingIn = true;
     });
 
     try {
-      await auth.FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _usernameController.text,
         password: _passwordController.text,
       );
-    } on auth.FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
+      Navigator.of(context, rootNavigator: true).pop();
+    } catch (e) {
+      setState(() {
+        _loggingIn = false;
+      });
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+          content: Text(
+            e.toString(),
+          ),
+          title: const Text('Error'),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final _node = FocusScope.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
@@ -67,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                 autocorrect: false,
                 autofillHints: _loggingIn ? null : [AutofillHints.email],
                 autofocus: true,
-                controller: _usernameController..text = _username,
+                controller: _usernameController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(
@@ -75,16 +95,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   labelText: 'Email',
-                  hintText: 'Email',
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.cancel),
                     onPressed: () => _usernameController.clear(),
                   ),
                 ),
-                enabled: !_loggingIn,
                 keyboardType: TextInputType.emailAddress,
-                onEditingComplete: () => {
-                  _node.requestFocus(_focus),
+                onEditingComplete: () {
+                  _focusNode.requestFocus();
                 },
                 readOnly: _loggingIn,
                 textCapitalization: TextCapitalization.none,
@@ -95,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: TextField(
                   autocorrect: false,
                   autofillHints: _loggingIn ? null : [AutofillHints.password],
-                  controller: _passwordController..text = _password,
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(
@@ -103,27 +121,25 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     labelText: 'Password',
-                    hintText: 'Password',
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.cancel),
                       onPressed: () => _passwordController.clear(),
                     ),
                   ),
-                  enabled: !_loggingIn,
-                  focusNode: _focus,
+                  focusNode: _focusNode,
                   keyboardType: TextInputType.emailAddress,
                   obscureText: true,
-                  onSubmitted: (_) => _node.unfocus(),
+                  onEditingComplete: _login,
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.done,
                 ),
               ),
               FlatButton(
-                onPressed: _handleLogin,
+                onPressed: _loggingIn ? null : _login,
                 child: const Text('Login'),
               ),
               FlatButton(
-                onPressed: () {},
+                onPressed: _loggingIn ? null : () {},
                 child: const Text('Register'),
               ),
             ],

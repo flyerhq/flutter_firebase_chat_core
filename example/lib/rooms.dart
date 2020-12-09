@@ -1,4 +1,5 @@
 import 'package:example/chat.dart';
+import 'package:example/login.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -40,21 +41,6 @@ class _RoomsPageState extends State<RoomsPage> {
     }
   }
 
-  void login() async {
-    try {
-      await auth.FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: "dexter.crona@gmail.com",
-        password: "Qawsed1-",
-      );
-    } on auth.FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
-  }
-
   void logout() async {
     await auth.FirebaseAuth.instance.signOut();
   }
@@ -74,17 +60,40 @@ class _RoomsPageState extends State<RoomsPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _user != null ? () {} : null,
+            onPressed: _user == null ? null : () {},
           ),
         ],
         leading: IconButton(
           icon: const Icon(Icons.logout),
-          onPressed: _user != null ? logout : null,
+          onPressed: _user == null ? null : logout,
         ),
         title: const Text('Rooms'),
       ),
-      body: _user != null
-          ? StreamBuilder<List<Room>>(
+      body: _user == null
+          ? Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.only(
+                bottom: 200,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Not authenticated'),
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) => LoginPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Login'),
+                  ),
+                ],
+              ),
+            )
+          : StreamBuilder<List<Room>>(
               stream: FirebaseChatCore.instance.rooms(),
               initialData: [],
               builder: (context, snapshot) {
@@ -106,8 +115,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
+                        Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => ChatPage(
                               roomId: room.id,
@@ -142,22 +150,7 @@ class _RoomsPageState extends State<RoomsPage> {
                     );
                   },
                 );
-              })
-          : Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(
-                bottom: 200,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Not authenticated'),
-                  FlatButton(
-                    onPressed: login,
-                    child: const Text('Login'),
-                  ),
-                ],
-              ),
+              },
             ),
     );
   }
