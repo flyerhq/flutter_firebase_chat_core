@@ -90,33 +90,34 @@ class _LoginPageState extends State<LoginPage> {
                 textCapitalization: TextCapitalization.none,
                 textInputAction: TextInputAction.next,
               ),
-              SizedBox(height: 10),
-              TextField(
-                autocorrect: false,
-                autofillHints: _loggingIn ? null : [AutofillHints.password],
-                controller: _passwordController..text = _password,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8.0),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 8),
+                child: TextField(
+                  autocorrect: false,
+                  autofillHints: _loggingIn ? null : [AutofillHints.password],
+                  controller: _passwordController..text = _password,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                    ),
+                    labelText: 'Password',
+                    hintText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.cancel),
+                      onPressed: () => _passwordController.clear(),
                     ),
                   ),
-                  labelText: 'Password',
-                  hintText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.cancel),
-                    onPressed: () => _passwordController.clear(),
-                  ),
+                  enabled: !_loggingIn,
+                  focusNode: _focus,
+                  keyboardType: TextInputType.emailAddress,
+                  obscureText: true,
+                  onSubmitted: (_) => _node.unfocus(),
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.done,
                 ),
-                enabled: !_loggingIn,
-                focusNode: _focus,
-                keyboardType: TextInputType.emailAddress,
-                obscureText: true,
-                onSubmitted: (_) => _node.unfocus(),
-                textCapitalization: TextCapitalization.none,
-                textInputAction: TextInputAction.done,
               ),
-              SizedBox(height: 10),
               FlatButton(
                 onPressed: _handleLogin,
                 child: const Text('Login'),
