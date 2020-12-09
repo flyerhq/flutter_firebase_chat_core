@@ -23,7 +23,7 @@ class ChatPage extends StatelessWidget {
         initialData: [],
         builder: (context, snapshot) {
           return Chat(
-            messages: snapshot.data ?? [],
+            messages: snapshot.data,
             onSendPressed: (message) => FirebaseChatCore.instance.sendMessage(
               message,
               roomId,
