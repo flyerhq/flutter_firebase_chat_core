@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Finish core
+
 ## 0.0.3
 
 - Added chat UI
