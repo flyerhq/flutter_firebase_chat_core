@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Update LICENSE
+
 ## 0.0.4
 
 - Finish core
