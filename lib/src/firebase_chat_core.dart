@@ -125,6 +125,21 @@ class FirebaseChatCore {
         .add(messageMap);
   }
 
+  void updateMessageWithPreviewData(
+    String messageId,
+    types.PreviewData previewData,
+    String roomId,
+  ) async {
+    if (firebaseUser == null) return;
+
+    return FirebaseFirestore.instance
+        .collection('rooms/$roomId/messages')
+        .doc(messageId)
+        .update({'previewData': previewData.toJson()})
+        .then((value) => print('Message Updated'))
+        .catchError((error) => print('Failed to update message: $error'));
+  }
+
   Stream<List<types.User>> users() {
     if (firebaseUser == null) {
       return Stream<List<types.User>>.empty();

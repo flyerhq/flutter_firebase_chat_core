@@ -12,6 +12,17 @@ class ChatPage extends StatelessWidget {
 
   final String roomId;
 
+  void _onPreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
+    FirebaseChatCore.instance.updateMessageWithPreviewData(
+      message.id,
+      previewData,
+      roomId,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +34,8 @@ class ChatPage extends StatelessWidget {
         initialData: [],
         builder: (context, snapshot) {
           return Chat(
-            messages: snapshot.data,
+            messages: snapshot.data ?? [],
+            onPreviewDataFetched: _onPreviewDataFetched,
             onSendPressed: (message) => FirebaseChatCore.instance.sendMessage(
               message,
               roomId,

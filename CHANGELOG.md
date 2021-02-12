@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Update message when preview data fetched
+
 ## 0.0.5
 
 - Update LICENSE

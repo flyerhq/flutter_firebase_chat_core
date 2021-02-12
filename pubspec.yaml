@@ -1,6 +1,6 @@
 name: flutter_firebase_chat_core
 description: Flutter Firebase Chat Core
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/flyerhq/flutter_firebase_chat_core
 
 environment:
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   cloud_firestore: ^0.16.0
   firebase_auth: ^0.20.0+1
-  flutter_chat_types: ^1.0.3
+  flutter_chat_types: ^1.0.9
   meta: ^1.2.4
 
 dev_dependencies:
