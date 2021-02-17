@@ -4,6 +4,8 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/src/models/room.dart';
 import 'package:flutter_firebase_chat_core/src/util.dart';
 import 'package:meta/meta.dart';
+import 'package:union/union.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseChatCore {
   User firebaseUser = FirebaseAuth.instance.currentUser;
@@ -113,8 +115,33 @@ class FirebaseChatCore {
         .asyncMap((query) => processRoomsQuery(firebaseUser, query));
   }
 
-  void sendMessage(types.Message message, String roomId) async {
+  void sendMessage(
+      Union3<types.PartialFile, types.PartialImage, types.PartialText>
+          partialMessage,
+      String roomId) async {
     if (firebaseUser == null) return;
+
+    types.Message message;
+
+    if (partialMessage.value is types.PartialFile) {
+      message = types.FileMessage.fromPartial(
+        firebaseUser.uid,
+        Uuid().v4(),
+        partialMessage.value,
+      );
+    } else if (partialMessage.value is types.PartialImage) {
+      message = types.ImageMessage.fromPartial(
+        firebaseUser.uid,
+        Uuid().v4(),
+        partialMessage.value,
+      );
+    } else if (partialMessage.value is types.PartialText) {
+      message = types.TextMessage.fromPartial(
+        firebaseUser.uid,
+        Uuid().v4(),
+        partialMessage.value,
+      );
+    }
 
     final messageMap = message.toJson();
     messageMap.removeWhere((key, value) => key == 'id');
