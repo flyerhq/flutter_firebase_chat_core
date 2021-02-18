@@ -1,3 +1,7 @@
+## 0.0.7
+
+- Handle attachments upload
+
 ## 0.0.6
 
 - Update message when preview data fetched

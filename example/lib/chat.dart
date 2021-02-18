@@ -157,9 +157,9 @@ class _ChatPageState extends State<ChatPage> {
     if (result != null) {
       _setAttachmentUploading(true);
       final size = File(result.path).lengthSync();
-      final extension = result.path.split('.').last;
-      final imageName = 'image.$extension';
+      final imageName = result.path.split('/').last;
       final file = File(result.path);
+      print(result.path);
 
       try {
         final reference = FirebaseStorage.instance.ref(imageName);
