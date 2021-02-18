@@ -13,7 +13,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:union/union.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({
     Key key,
     @required this.roomId,
@@ -22,7 +22,14 @@ class ChatPage extends StatelessWidget {
 
   final String roomId;
 
-  void _handleAtachmentPress(BuildContext context) {
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  bool _isAttachmentUploading = false;
+
+  void _handleAtachmentPress() {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
@@ -91,15 +98,21 @@ class ChatPage extends StatelessWidget {
     FirebaseChatCore.instance.updateMessageWithPreviewData(
       message.id,
       previewData,
-      roomId,
+      widget.roomId,
     );
   }
 
   void _onSendPressed(types.PartialText message) {
     FirebaseChatCore.instance.sendMessage(
       message.asThird(),
-      roomId,
+      widget.roomId,
     );
+  }
+
+  void _setAttachmentUploading(bool uploading) {
+    setState(() {
+      _isAttachmentUploading = uploading;
+    });
   }
 
   void _showFilePicker() async {
@@ -108,6 +121,7 @@ class ChatPage extends StatelessWidget {
     );
 
     if (result != null) {
+      _setAttachmentUploading(true);
       final filePath = result.files.single.path;
       final fileName = result.files.single.name;
       final file = File(filePath);
@@ -126,9 +140,11 @@ class ChatPage extends StatelessWidget {
 
         FirebaseChatCore.instance.sendMessage(
           message.asFirst(),
-          roomId,
+          widget.roomId,
         );
+        _setAttachmentUploading(false);
       } on FirebaseException catch (e) {
+        _setAttachmentUploading(false);
         print(e);
       }
     } else {
@@ -139,6 +155,7 @@ class ChatPage extends StatelessWidget {
   void _showImagePicker() async {
     final result = await ImagePicker().getImage(source: ImageSource.gallery);
     if (result != null) {
+      _setAttachmentUploading(true);
       final size = File(result.path).lengthSync();
       final extension = result.path.split('.').last;
       final imageName = 'image.$extension';
@@ -157,9 +174,11 @@ class ChatPage extends StatelessWidget {
 
         FirebaseChatCore.instance.sendMessage(
           message.asSecond(),
-          roomId,
+          widget.roomId,
         );
+        _setAttachmentUploading(false);
       } on FirebaseException catch (e) {
+        _setAttachmentUploading(false);
         print(e);
       }
     } else {
@@ -180,14 +199,13 @@ class ChatPage extends StatelessWidget {
         title: const Text('Chat'),
       ),
       body: StreamBuilder<List<types.Message>>(
-        stream: FirebaseChatCore.instance.messages(roomId),
+        stream: FirebaseChatCore.instance.messages(widget.roomId),
         initialData: [],
         builder: (context, snapshot) {
           return Chat(
+            isAttachmentUploading: _isAttachmentUploading,
             messages: snapshot.data ?? [],
-            onAttachmentPressed: () {
-              _handleAtachmentPress(context);
-            },
+            onAttachmentPressed: _handleAtachmentPress,
             onFilePressed: _openFile,
             onPreviewDataFetched: _onPreviewDataFetched,
             onSendPressed: _onSendPressed,

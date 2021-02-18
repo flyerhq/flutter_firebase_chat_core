@@ -32,7 +32,7 @@ dependencies:
   firebase_auth: ^0.20.0+1
   firebase_core: ^0.7.0
   firebase_storage: ^7.0.0
-  flutter_chat_ui: ^0.4.4
+  flutter_chat_ui: ^0.4.5
   http: ^0.12.2
   image_picker: ^0.6.7+22
   mime: ^0.9.7

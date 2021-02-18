@@ -5,7 +5,6 @@ import 'package:flutter_firebase_chat_core/src/models/room.dart';
 import 'package:flutter_firebase_chat_core/src/util.dart';
 import 'package:meta/meta.dart';
 import 'package:union/union.dart';
-import 'package:uuid/uuid.dart';
 
 class FirebaseChatCore {
   User firebaseUser = FirebaseAuth.instance.currentUser;
@@ -126,19 +125,19 @@ class FirebaseChatCore {
     if (partialMessage.value is types.PartialFile) {
       message = types.FileMessage.fromPartial(
         firebaseUser.uid,
-        Uuid().v4(),
+        '',
         partialMessage.value,
       );
     } else if (partialMessage.value is types.PartialImage) {
       message = types.ImageMessage.fromPartial(
         firebaseUser.uid,
-        Uuid().v4(),
+        '',
         partialMessage.value,
       );
     } else if (partialMessage.value is types.PartialText) {
       message = types.TextMessage.fromPartial(
         firebaseUser.uid,
-        Uuid().v4(),
+        '',
         partialMessage.value,
       );
     }
