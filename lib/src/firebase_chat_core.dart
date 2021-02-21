@@ -37,10 +37,10 @@ class FirebaseChatCore {
 
     return Room(
       id: room.id,
-      isGroup: true,
-      users: roomUsers,
       imageUrl: imageUrl,
+      isGroup: true,
       name: name,
+      users: roomUsers,
     );
   }
 
@@ -151,19 +151,16 @@ class FirebaseChatCore {
         .add(messageMap);
   }
 
-  void updateMessageWithPreviewData(
-    String messageId,
-    types.PreviewData previewData,
-    String roomId,
-  ) async {
-    if (firebaseUser == null) return;
+  void updateMessage(types.Message message, String roomId) async {
+    if (firebaseUser == null || message.authorId != firebaseUser.uid) return;
 
-    return FirebaseFirestore.instance
+    final messageMap = message.toJson();
+    messageMap.removeWhere((key, value) => key == 'id' || key == 'timestamp');
+
+    await FirebaseFirestore.instance
         .collection('rooms/$roomId/messages')
-        .doc(messageId)
-        .update({'previewData': previewData.toJson()})
-        .then((value) => print('Message Updated'))
-        .catchError((error) => print('Failed to update message: $error'));
+        .doc(message.id)
+        .update(messageMap);
   }
 
   Stream<List<types.User>> users() {

@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Update to the latest chat UI
+
 ## 0.0.7
 
 - Handle attachments upload
