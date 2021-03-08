@@ -1,31 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_firebase_chat_core/src/models/room.dart';
-import 'package:flutter_firebase_chat_core/src/util.dart';
-import 'package:meta/meta.dart';
-import 'package:union/union.dart';
+import './models/room.dart';
+import 'util.dart';
 
 class FirebaseChatCore {
-  User firebaseUser = FirebaseAuth.instance.currentUser;
-
   FirebaseChatCore._privateConstructor() {
-    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
       firebaseUser = user;
     });
   }
+
+  User? firebaseUser = FirebaseAuth.instance.currentUser;
 
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
 
   Future<Room> createGroupRoom({
-    String imageUrl,
-    @required String name,
-    @required List<types.User> users,
+    required String imageUrl,
+    required String name,
+    required List<types.User> users,
   }) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
-    final currentUser = await fetchUser(firebaseUser.uid);
+    final currentUser = await fetchUser(firebaseUser!.uid);
     final roomUsers = [currentUser] + users;
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
@@ -49,24 +47,25 @@ class FirebaseChatCore {
 
     final query = await FirebaseFirestore.instance
         .collection('rooms')
-        .where('userIds', arrayContains: firebaseUser.uid)
+        .where('userIds', arrayContains: firebaseUser!.uid)
         .get();
 
-    final rooms = await processRoomsQuery(firebaseUser, query);
+    final rooms = await processRoomsQuery(firebaseUser!, query);
 
-    final existingRoom = rooms.firstWhere((room) {
-      if (room.isGroup) return false;
+    try {
+      return rooms.firstWhere((room) {
+        if (room.isGroup) return false;
 
-      final userIds = room.users.map((u) => u.id);
-      return (userIds.contains(firebaseUser.uid) &&
-          userIds.contains(otherUser.id));
-    }, orElse: () => null);
-
-    if (existingRoom != null) {
-      return existingRoom;
+        final userIds = room.users.map((u) => u.id);
+        return userIds.contains(firebaseUser!.uid) &&
+            userIds.contains(otherUser.id);
+      });
+    } catch (e) {
+      // Do nothing if room does not exist
+      // Create a new room instead
     }
 
-    final currentUser = await fetchUser(firebaseUser.uid);
+    final currentUser = await fetchUser(firebaseUser!.uid);
     final users = [currentUser, otherUser];
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
@@ -96,63 +95,75 @@ class FirebaseChatCore {
         .collection('rooms/$roomId/messages')
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((query) {
-      return query.docs.map((doc) {
-        Map<String, dynamic> data = doc.data();
-        data['id'] = doc.id;
-        data['timestamp'] = data['timestamp']?.seconds;
-        return types.Message.fromJson(data);
-      }).toList();
-    });
+        .map(
+      (snapshot) {
+        return snapshot.docs.fold<List<types.Message>>(
+          [],
+          (previousValue, element) {
+            final data = element.data();
+
+            if (data != null) {
+              data['id'] = element.id;
+              data['timestamp'] = element['timestamp']?.seconds;
+              return [...previousValue, types.Message.fromJson(data)];
+            }
+
+            return previousValue;
+          },
+        );
+      },
+    );
   }
 
   Stream<List<Room>> rooms() {
+    if (firebaseUser == null) return const Stream.empty();
+
     return FirebaseFirestore.instance
         .collection('rooms')
-        .where('userIds', arrayContains: firebaseUser.uid)
+        .where('userIds', arrayContains: firebaseUser!.uid)
         .snapshots()
-        .asyncMap((query) => processRoomsQuery(firebaseUser, query));
+        .asyncMap((query) => processRoomsQuery(firebaseUser!, query));
   }
 
-  void sendMessage(
-      Union3<types.PartialFile, types.PartialImage, types.PartialText>
-          partialMessage,
-      String roomId) async {
+  void sendMessage(dynamic partialMessage, String roomId) async {
     if (firebaseUser == null) return;
 
-    types.Message message;
+    types.Message? message;
 
-    if (partialMessage.value is types.PartialFile) {
+    if (partialMessage is types.PartialFile) {
       message = types.FileMessage.fromPartial(
-        firebaseUser.uid,
-        '',
-        partialMessage.value,
+        authorId: firebaseUser!.uid,
+        id: '',
+        partialFile: partialMessage,
       );
-    } else if (partialMessage.value is types.PartialImage) {
+    } else if (partialMessage is types.PartialImage) {
       message = types.ImageMessage.fromPartial(
-        firebaseUser.uid,
-        '',
-        partialMessage.value,
+        authorId: firebaseUser!.uid,
+        id: '',
+        partialImage: partialMessage,
       );
-    } else if (partialMessage.value is types.PartialText) {
+    } else if (partialMessage is types.PartialText) {
       message = types.TextMessage.fromPartial(
-        firebaseUser.uid,
-        '',
-        partialMessage.value,
+        authorId: firebaseUser!.uid,
+        id: '',
+        partialText: partialMessage,
       );
     }
 
-    final messageMap = message.toJson();
-    messageMap.removeWhere((key, value) => key == 'id');
-    messageMap['timestamp'] = FieldValue.serverTimestamp();
+    if (message != null) {
+      final messageMap = message.toJson();
+      messageMap.removeWhere((key, value) => key == 'id');
+      messageMap['timestamp'] = FieldValue.serverTimestamp();
 
-    await FirebaseFirestore.instance
-        .collection('rooms/$roomId/messages')
-        .add(messageMap);
+      await FirebaseFirestore.instance
+          .collection('rooms/$roomId/messages')
+          .add(messageMap);
+    }
   }
 
   void updateMessage(types.Message message, String roomId) async {
-    if (firebaseUser == null || message.authorId != firebaseUser.uid) return;
+    if (firebaseUser == null) return;
+    if (message.authorId != firebaseUser!.uid) return;
 
     final messageMap = message.toJson();
     messageMap.removeWhere((key, value) => key == 'id' || key == 'timestamp');
@@ -164,20 +175,16 @@ class FirebaseChatCore {
   }
 
   Stream<List<types.User>> users() {
-    if (firebaseUser == null) {
-      return Stream<List<types.User>>.empty();
-    }
+    if (firebaseUser == null) return const Stream.empty();
+    return FirebaseFirestore.instance.collection('users').snapshots().map(
+          (snapshot) => snapshot.docs.fold<List<types.User>>(
+            [],
+            (previousValue, element) {
+              if (firebaseUser!.uid == element.id) return previousValue;
 
-    return FirebaseFirestore.instance
-        .collection('users')
-        .snapshots()
-        .map((query) {
-      List<types.User> newUsers = [];
-      query.docs.forEach((doc) {
-        if (firebaseUser.uid == doc.id) return;
-        newUsers.add(processUserDocument(doc));
-      });
-      return newUsers;
-    });
+              return [...previousValue, processUserDocument(element)];
+            },
+          ),
+        );
   }
 }

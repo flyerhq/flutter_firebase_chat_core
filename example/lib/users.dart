@@ -1,14 +1,16 @@
-import 'package:example/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'chat.dart';
 
 class UsersPage extends StatelessWidget {
+  const UsersPage({Key? key}) : super(key: key);
+
   void _handlePressed(types.User otherUser, BuildContext context) async {
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
 
     Navigator.of(context).pop();
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ChatPage(
           roomId: room.id,
@@ -21,13 +23,14 @@ class UsersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.dark,
         title: const Text('Users'),
       ),
       body: StreamBuilder<List<types.User>>(
         stream: FirebaseChatCore.instance.users(),
-        initialData: [],
+        initialData: const [],
         builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data.length == 0) {
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.only(
@@ -38,9 +41,9 @@ class UsersPage extends StatelessWidget {
           }
 
           return ListView.builder(
-            itemCount: snapshot.data.length,
+            itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final types.User user = snapshot.data[index];
+              final user = snapshot.data![index];
 
               return GestureDetector(
                 onTap: () {
@@ -63,7 +66,9 @@ class UsersPage extends StatelessWidget {
                           borderRadius: const BorderRadius.all(
                             Radius.circular(20),
                           ),
-                          child: Image.network(user.avatarUrl),
+                          child: Image.network(
+                            user.avatarUrl ?? '',
+                          ),
                         ),
                       ),
                       Text('${user.firstName} ${user.lastName}'),

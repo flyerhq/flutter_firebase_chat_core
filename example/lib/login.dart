@@ -1,36 +1,33 @@
-import 'dart:io' show Platform;
-import 'package:example/register.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'register.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  FocusNode _focusNode;
+  FocusNode? _focusNode;
   bool _loggingIn = false;
-  TextEditingController _passwordController;
-  TextEditingController _usernameController;
+  TextEditingController? _passwordController;
+  TextEditingController? _usernameController;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
     _passwordController = TextEditingController(text: 'Qawsed1-');
-    _usernameController = TextEditingController(
-      text: Platform.isIOS ? 'dexter.crona@gmail.com' : 'ofelia84@hotmail.com',
-    );
+    _usernameController = TextEditingController(text: 'ofelia84@hotmail.com');
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
-    _passwordController.dispose();
-    _usernameController.dispose();
+    _focusNode?.dispose();
+    _passwordController?.dispose();
+    _usernameController?.dispose();
     super.dispose();
   }
 
@@ -43,8 +40,8 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _usernameController.text,
-        password: _passwordController.text,
+        email: _usernameController!.text,
+        password: _passwordController!.text,
       );
       Navigator.of(context).pop();
     } catch (e) {
@@ -52,15 +49,15 @@ class _LoginPageState extends State<LoginPage> {
         _loggingIn = false;
       });
 
-      showDialog(
+      await showDialog(
         context: context,
         builder: (context) => AlertDialog(
           actions: [
             TextButton(
-              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: const Text('OK'),
             ),
           ],
           content: Text(
@@ -76,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.dark,
         title: const Text('Login'),
       ),
       body: SingleChildScrollView(
@@ -89,41 +87,41 @@ class _LoginPageState extends State<LoginPage> {
                 autofocus: true,
                 controller: _usernameController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
                       Radius.circular(8.0),
                     ),
                   ),
                   labelText: 'Email',
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.cancel),
-                    onPressed: () => _usernameController.clear(),
+                    onPressed: () => _usernameController?.clear(),
                   ),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 onEditingComplete: () {
-                  _focusNode.requestFocus();
+                  _focusNode?.requestFocus();
                 },
                 readOnly: _loggingIn,
                 textCapitalization: TextCapitalization.none,
                 textInputAction: TextInputAction.next,
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: 8),
                 child: TextField(
                   autocorrect: false,
                   autofillHints: _loggingIn ? null : [AutofillHints.password],
                   controller: _passwordController,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
                         Radius.circular(8.0),
                       ),
                     ),
                     labelText: 'Password',
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.cancel),
-                      onPressed: () => _passwordController.clear(),
+                      onPressed: () => _passwordController?.clear(),
                     ),
                   ),
                   focusNode: _focusNode,
@@ -134,17 +132,17 @@ class _LoginPageState extends State<LoginPage> {
                   textInputAction: TextInputAction.done,
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: _loggingIn ? null : _login,
                 child: const Text('Login'),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: _loggingIn
                     ? null
                     : () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
+                            builder: (context) => const RegisterPage(),
                           ),
                         );
                       },

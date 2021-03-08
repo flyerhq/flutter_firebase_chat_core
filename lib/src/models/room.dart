@@ -1,19 +1,19 @@
-import 'package:meta/meta.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:meta/meta.dart';
 
 @immutable
 class Room {
   const Room({
-    @required this.id,
+    required this.id,
     this.imageUrl,
-    @required this.isGroup,
+    required this.isGroup,
     this.name,
-    @required this.users,
+    required this.users,
   });
 
   final String id;
-  final String imageUrl;
+  final String? imageUrl;
   final bool isGroup;
-  final String name;
+  final String? name;
   final List<types.User> users;
 }

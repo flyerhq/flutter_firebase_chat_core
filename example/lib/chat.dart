@@ -10,14 +10,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:union/union.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({
-    Key key,
-    @required this.roomId,
-  })  : assert(roomId != null),
-        super(key: key);
+    Key? key,
+    required this.roomId,
+  }) : super(key: key);
 
   final String roomId;
 
@@ -32,36 +30,36 @@ class _ChatPageState extends State<ChatPage> {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
           height: 180,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   _showFilePicker();
                 },
-                child: Align(
+                child: const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Open file picker"),
+                  child: Text('Open file picker'),
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   _showImagePicker();
                 },
-                child: Align(
+                child: const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Open image picker"),
+                  child: Text('Open image picker'),
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Align(
+                child: const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Cancel"),
+                  child: Text('Cancel'),
                 ),
               ),
             ],
@@ -75,30 +73,30 @@ class _ChatPageState extends State<ChatPage> {
     types.TextMessage message,
     types.PreviewData previewData,
   ) {
-    final updatedMessage = message.copyWith(previewData: previewData);
+    final updatedMessage = message.copyWith(previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.roomId);
   }
 
   void _onSendPressed(types.PartialText message) {
     FirebaseChatCore.instance.sendMessage(
-      message.asThird(),
+      message,
       widget.roomId,
     );
   }
 
   void _openFile(types.FileMessage message) async {
-    String localPath = message.uri;
+    var localPath = message.uri;
 
     if (message.uri.startsWith('http')) {
-      final client = new http.Client();
+      final client = http.Client();
       final request = await client.get(Uri.parse(message.uri));
       final bytes = request.bodyBytes;
       final documentsDir = (await getApplicationDocumentsDirectory()).path;
       localPath = '$documentsDir/${message.fileName}';
 
       if (!File(localPath).existsSync()) {
-        final file = new File(localPath);
+        final file = File(localPath);
         await file.writeAsBytes(bytes);
       }
     }
@@ -119,9 +117,9 @@ class _ChatPageState extends State<ChatPage> {
 
     if (result != null) {
       _setAttachmentUploading(true);
-      final filePath = result.files.single.path;
       final fileName = result.files.single.name;
-      final file = File(filePath);
+      final filePath = result.files.single.path;
+      final file = File(filePath ?? '');
 
       try {
         final reference = FirebaseStorage.instance.ref(fileName);
@@ -129,14 +127,14 @@ class _ChatPageState extends State<ChatPage> {
         final uri = await reference.getDownloadURL();
 
         final message = types.PartialFile(
-          fileName: result.files.single.name,
-          mimeType: lookupMimeType(result.files.single.path),
-          size: result.files.single.size,
+          fileName: fileName ?? '',
+          mimeType: lookupMimeType(filePath ?? ''),
+          size: result.files.single.size ?? 0,
           uri: uri,
         );
 
         FirebaseChatCore.instance.sendMessage(
-          message.asFirst(),
+          message,
           widget.roomId,
         );
         _setAttachmentUploading(false);
@@ -178,7 +176,7 @@ class _ChatPageState extends State<ChatPage> {
         );
 
         FirebaseChatCore.instance.sendMessage(
-          message.asSecond(),
+          message,
           widget.roomId,
         );
         _setAttachmentUploading(false);
@@ -195,11 +193,12 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.dark,
         title: const Text('Chat'),
       ),
       body: StreamBuilder<List<types.Message>>(
         stream: FirebaseChatCore.instance.messages(widget.roomId),
-        initialData: [],
+        initialData: const [],
         builder: (context, snapshot) {
           return Chat(
             isAttachmentUploading: _isAttachmentUploading,
@@ -208,7 +207,9 @@ class _ChatPageState extends State<ChatPage> {
             onFilePressed: _openFile,
             onPreviewDataFetched: _onPreviewDataFetched,
             onSendPressed: _onSendPressed,
-            user: types.User(id: FirebaseChatCore.instance.firebaseUser.uid),
+            user: types.User(
+              id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+            ),
           );
         },
       ),

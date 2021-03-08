@@ -1,13 +1,13 @@
-import 'package:example/chat.dart';
-import 'package:example/login.dart';
-import 'package:example/users.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'chat.dart';
+import 'login.dart';
+import 'users.dart';
 
 class RoomsPage extends StatefulWidget {
-  RoomsPage({Key key}) : super(key: key);
+  const RoomsPage({Key? key}) : super(key: key);
 
   @override
   _RoomsPageState createState() => _RoomsPageState();
@@ -16,18 +16,18 @@ class RoomsPage extends StatefulWidget {
 class _RoomsPageState extends State<RoomsPage> {
   bool _error = false;
   bool _initialized = false;
-  User _user;
+  User? _user;
 
   @override
   void initState() {
-    super.initState();
     initializeFlutterFire();
+    super.initState();
   }
 
   void initializeFlutterFire() async {
     try {
       await Firebase.initializeApp();
-      FirebaseAuth.instance.authStateChanges().listen((User user) {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) {
         setState(() {
           _user = user;
         });
@@ -67,12 +67,13 @@ class _RoomsPageState extends State<RoomsPage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         fullscreenDialog: true,
-                        builder: (context) => UsersPage(),
+                        builder: (context) => const UsersPage(),
                       ),
                     );
                   },
           ),
         ],
+        brightness: Brightness.dark,
         leading: IconButton(
           icon: const Icon(Icons.logout),
           onPressed: _user == null ? null : logout,
@@ -89,12 +90,12 @@ class _RoomsPageState extends State<RoomsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Not authenticated'),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           fullscreenDialog: true,
-                          builder: (context) => LoginPage(),
+                          builder: (context) => const LoginPage(),
                         ),
                       );
                     },
@@ -105,9 +106,9 @@ class _RoomsPageState extends State<RoomsPage> {
             )
           : StreamBuilder<List<Room>>(
               stream: FirebaseChatCore.instance.rooms(),
-              initialData: [],
+              initialData: const [],
               builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data.length == 0) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
                     alignment: Alignment.center,
                     margin: const EdgeInsets.only(
@@ -118,9 +119,9 @@ class _RoomsPageState extends State<RoomsPage> {
                 }
 
                 return ListView.builder(
-                  itemCount: snapshot.data.length,
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    final Room room = snapshot.data[index];
+                    final room = snapshot.data![index];
 
                     return GestureDetector(
                       onTap: () {
@@ -133,7 +134,7 @@ class _RoomsPageState extends State<RoomsPage> {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
                         ),
@@ -141,7 +142,7 @@ class _RoomsPageState extends State<RoomsPage> {
                           children: [
                             Container(
                               height: 40,
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 right: 16,
                               ),
                               width: 40,
@@ -149,10 +150,10 @@ class _RoomsPageState extends State<RoomsPage> {
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(20),
                                 ),
-                                child: Image.network(room.imageUrl),
+                                child: Image.network(room.imageUrl ?? ''),
                               ),
                             ),
-                            Text(room.name),
+                            Text(room.name ?? 'Room'),
                           ],
                         ),
                       ),

@@ -1,3 +1,7 @@
+## 0.1.0
+
+- Update to Flutter 2
+
 ## 0.0.8
 
 - Update to the latest chat UI

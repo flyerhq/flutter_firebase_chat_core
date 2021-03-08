@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_firebase_chat_core/src/models/room.dart';
+import './models/room.dart';
 
 Future<types.User> fetchUser(String userId) async {
   final doc =
@@ -11,17 +11,25 @@ Future<types.User> fetchUser(String userId) async {
 }
 
 Future<List<Room>> processRoomsQuery(
-    User firebaseUser, QuerySnapshot query) async {
+  User firebaseUser,
+  QuerySnapshot query,
+) async {
   final futures = query.docs.map((doc) async {
-    String imageUrl = doc.get('imageUrl');
-    final bool isGroup = doc.get('isGroup');
-    String name = doc.get('name');
-    final List<dynamic> userIds = doc.get('userIds');
+    var imageUrl = doc.get('imageUrl') as String?;
+    final isGroup = doc.get('isGroup') as bool;
+    var name = doc.get('name') as String?;
+    final userIds = doc.get('userIds') as List<dynamic>;
 
-    final users = await Future.wait(userIds.map((userId) => fetchUser(userId)));
+    final users = await Future.wait(
+      userIds.map(
+        (userId) => fetchUser(userId as String),
+      ),
+    );
 
     if (!isGroup) {
-      final otherUser = users.firstWhere((u) => u.id != firebaseUser.uid);
+      final otherUser = users.firstWhere(
+        (u) => u.id != firebaseUser.uid,
+      );
 
       if (otherUser != null) {
         imageUrl = otherUser.avatarUrl;
@@ -44,9 +52,9 @@ Future<List<Room>> processRoomsQuery(
 }
 
 types.User processUserDocument(DocumentSnapshot doc) {
-  final String avatarUrl = doc.get('avatarUrl');
-  final String firstName = doc.get('firstName');
-  final String lastName = doc.get('lastName');
+  final avatarUrl = doc.get('avatarUrl') as String?;
+  final firstName = doc.get('firstName') as String?;
+  final lastName = doc.get('lastName') as String?;
 
   final user = types.User(
     avatarUrl: avatarUrl,

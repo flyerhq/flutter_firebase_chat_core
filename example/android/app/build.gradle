@@ -27,20 +27,16 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
-
     defaultConfig {
         applicationId "chat.flyer"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

@@ -1,11 +1,14 @@
-import 'package:example/rooms.dart';
 import 'package:flutter/material.dart';
+import 'rooms.dart';
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: RoomsPage(),
+      home: const RoomsPage(),
     );
   }
 }
