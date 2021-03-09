@@ -1,3 +1,7 @@
+## 0.1.1
+
+- Fix static analysis warning
+
 ## 0.1.0
 
 - Update to Flutter 2
