@@ -27,13 +27,16 @@ Future<List<Room>> processRoomsQuery(
     );
 
     if (!isGroup) {
-      final otherUser = users.firstWhere(
-        (u) => u.id != firebaseUser.uid,
-      );
+      try {
+        final otherUser = users.firstWhere(
+          (u) => u.id != firebaseUser.uid,
+        );
 
-      if (otherUser != null) {
         imageUrl = otherUser.avatarUrl;
         name = '${otherUser.firstName} ${otherUser.lastName}';
+      } catch (e) {
+        // Do nothing if other user is not found, because he should be found.
+        // Consider falling back to some default values.
       }
     }
 
