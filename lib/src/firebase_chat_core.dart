@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import './models/room.dart';
 import 'util.dart';
 
+/// Provides access to Firebase chat data. Singleton, use
+/// FirebaseChatCore.instance to aceess methods.
 class FirebaseChatCore {
   FirebaseChatCore._privateConstructor() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -11,12 +12,16 @@ class FirebaseChatCore {
     });
   }
 
+  /// Current logged in user in Firebase. Does not update automatically.
+  /// Use [FirebaseAuth.authStateChanges] to listen to the state changes.
   User? firebaseUser = FirebaseAuth.instance.currentUser;
 
+  /// Singleton instance
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
 
-  Future<Room> createGroupRoom({
+  /// Creates a chat group room
+  Future<types.Room> createGroupRoom({
     required String imageUrl,
     required String name,
     required List<types.User> users,
@@ -33,7 +38,7 @@ class FirebaseChatCore {
       'userIds': roomUsers.map((u) => u.id).toList(),
     });
 
-    return Room(
+    return types.Room(
       id: room.id,
       imageUrl: imageUrl,
       isGroup: true,
@@ -42,7 +47,8 @@ class FirebaseChatCore {
     );
   }
 
-  Future<Room> createRoom(types.User otherUser) async {
+  /// Creates a normal room for 2 people
+  Future<types.Room> createRoom(types.User otherUser) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
@@ -75,13 +81,15 @@ class FirebaseChatCore {
       'userIds': users.map((u) => u.id).toList(),
     });
 
-    return Room(
+    return types.Room(
       id: room.id,
       isGroup: false,
       users: users,
     );
   }
 
+  /// Creates [types.User] in Firebase to store name and avatar used on
+  /// rooms list
   Future<void> createUserInFirestore(types.User user) async {
     await FirebaseFirestore.instance.collection('users').doc(user.id).set({
       'avatarUrl': user.avatarUrl,
@@ -90,6 +98,7 @@ class FirebaseChatCore {
     });
   }
 
+  /// Returns a stream of messages from Firebase for a given room
   Stream<List<types.Message>> messages(String roomId) {
     return FirebaseFirestore.instance
         .collection('rooms/$roomId/messages')
@@ -115,7 +124,9 @@ class FirebaseChatCore {
     );
   }
 
-  Stream<List<Room>> rooms() {
+  /// Returns a stream of rooms from Firebase. Only rooms where current
+  /// logged in user exist are returned.
+  Stream<List<types.Room>> rooms() {
     if (firebaseUser == null) return const Stream.empty();
 
     return FirebaseFirestore.instance
@@ -174,6 +185,7 @@ class FirebaseChatCore {
         .update(messageMap);
   }
 
+  /// Returns a stream of all users from Firebase
   Stream<List<types.User>> users() {
     if (firebaseUser == null) return const Stream.empty();
     return FirebaseFirestore.instance.collection('users').snapshots().map(

@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Add documentation comments
+
 ## 0.1.1
 
 - Fix static analysis warning

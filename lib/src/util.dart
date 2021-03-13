@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import './models/room.dart';
 
+/// Fetches user from Firebase and returns a promise
 Future<types.User> fetchUser(String userId) async {
   final doc =
       await FirebaseFirestore.instance.collection('users').doc(userId).get();
@@ -10,7 +10,9 @@ Future<types.User> fetchUser(String userId) async {
   return processUserDocument(doc);
 }
 
-Future<List<Room>> processRoomsQuery(
+/// Returns a list of [types.Room] created from Firebase query.
+/// If room has 2 participants, sets correct room name and image.
+Future<List<types.Room>> processRoomsQuery(
   User firebaseUser,
   QuerySnapshot query,
 ) async {
@@ -40,7 +42,7 @@ Future<List<Room>> processRoomsQuery(
       }
     }
 
-    final room = Room(
+    final room = types.Room(
       id: doc.id,
       imageUrl: imageUrl,
       isGroup: isGroup,
@@ -54,6 +56,7 @@ Future<List<Room>> processRoomsQuery(
   return await Future.wait(futures);
 }
 
+/// Returns a [types.User] created from Firebase document
 types.User processUserDocument(DocumentSnapshot doc) {
   final avatarUrl = doc.get('avatarUrl') as String?;
   final firstName = doc.get('firstName') as String?;
