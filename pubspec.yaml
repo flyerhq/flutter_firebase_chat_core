@@ -1,6 +1,6 @@
 name: flutter_firebase_chat_core
 description: >
-  Actively maintainable, community-driven Firebase BaaS for chat applications
+  Actively maintained, community-driven Firebase BaaS for chat applications
   with an optional chat UI.
 version: 0.1.2
 homepage: https://github.com/flyerhq/flutter_firebase_chat_core
