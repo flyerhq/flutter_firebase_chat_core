@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Update types
+
 ## 0.1.2
 
 - Add documentation comments

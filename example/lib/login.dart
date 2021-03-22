@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _focusNode = FocusNode();
     _passwordController = TextEditingController(text: 'Qawsed1-');
-    _usernameController = TextEditingController(text: 'ofelia84@hotmail.com');
+    _usernameController = TextEditingController(text: '');
   }
 
   @override

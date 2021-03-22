@@ -1,4 +1,4 @@
-package chat.flyer
+package com.example
 
 import io.flutter.embedding.android.FlutterActivity
 

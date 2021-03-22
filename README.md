@@ -30,8 +30,8 @@ Flyer Chat is a platform for creating in-app chat experiences using Flutter or [
 
 Read our [documentation](https://flyer.chat) or see the [example](https://github.com/flyerhq/flutter_firebase_chat_core/tree/main/example) project. To run the example project you need to have your own [Firebase](https://firebase.google.com) project and depending on the platform you want to:
 
-1. Create an iOS app with a bundle ID `chat.flyer` (*only required for the example project, you can use anything for your app*) in [Firebase console](https://console.firebase.google.com) of your project and download generated `GoogleService-Info.plist`. Put it in the `example/ios` folder. You don't need to open Xcode to do it, it will expect this file in this folder.
-2. Create an Android app with package name `chat.flyer` (*only required for the example project, you can use anything for your app*) in [Firebase console](https://console.firebase.google.com) of your project and download generated `google-services.json`. Put it in the `example/android/app` folder.
+1. Create an iOS app with a bundle ID `com.example` (*only required for the example project, you can use anything for your app*) in [Firebase console](https://console.firebase.google.com) of your project and download generated `GoogleService-Info.plist`. Put it in the `example/ios/Runner` folder. You don't need to open Xcode to do it, it will expect this file in this folder.
+2. Create an Android app with package name `com.example` (*only required for the example project, you can use anything for your app*) in [Firebase console](https://console.firebase.google.com) of your project and download generated `google-services.json`. Put it in the `example/android/app` folder.
 3. Create a web app in [Firebase console](https://console.firebase.google.com) of your project. You will see a script that will look like this
 
 ```html

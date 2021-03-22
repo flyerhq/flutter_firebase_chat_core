@@ -18,8 +18,8 @@ Future<List<types.Room>> processRoomsQuery(
 ) async {
   final futures = query.docs.map((doc) async {
     var imageUrl = doc.get('imageUrl') as String?;
-    final isGroup = doc.get('isGroup') as bool;
     var name = doc.get('name') as String?;
+    final type = doc.get('type') as String;
     final userIds = doc.get('userIds') as List<dynamic>;
 
     final users = await Future.wait(
@@ -28,7 +28,7 @@ Future<List<types.Room>> processRoomsQuery(
       ),
     );
 
-    if (!isGroup) {
+    if (type == 'direct') {
       try {
         final otherUser = users.firstWhere(
           (u) => u.id != firebaseUser.uid,
@@ -45,8 +45,8 @@ Future<List<types.Room>> processRoomsQuery(
     final room = types.Room(
       id: doc.id,
       imageUrl: imageUrl,
-      isGroup: isGroup,
       name: name,
+      type: type == 'direct' ? types.RoomType.direct : types.RoomType.group,
       users: users,
     );
 

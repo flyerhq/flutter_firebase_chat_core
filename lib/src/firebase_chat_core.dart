@@ -33,16 +33,16 @@ class FirebaseChatCore {
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
       'imageUrl': imageUrl,
-      'isGroup': true,
       'name': name,
+      'type': 'group',
       'userIds': roomUsers.map((u) => u.id).toList(),
     });
 
     return types.Room(
       id: room.id,
       imageUrl: imageUrl,
-      isGroup: true,
       name: name,
+      type: types.RoomType.group,
       users: roomUsers,
     );
   }
@@ -60,7 +60,7 @@ class FirebaseChatCore {
 
     try {
       return rooms.firstWhere((room) {
-        if (room.isGroup) return false;
+        if (room.type == types.RoomType.group) return false;
 
         final userIds = room.users.map((u) => u.id);
         return userIds.contains(firebaseUser!.uid) &&
@@ -76,14 +76,14 @@ class FirebaseChatCore {
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
       'imageUrl': null,
-      'isGroup': false,
       'name': null,
+      'type': 'direct',
       'userIds': users.map((u) => u.id).toList(),
     });
 
     return types.Room(
       id: room.id,
-      isGroup: false,
+      type: types.RoomType.direct,
       users: users,
     );
   }
