@@ -22,7 +22,7 @@ class FirebaseChatCore {
 
   /// Creates a chat group room
   Future<types.Room> createGroupRoom({
-    required String imageUrl,
+    String? imageUrl,
     required String name,
     required List<types.User> users,
   }) async {
