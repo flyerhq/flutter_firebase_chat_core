@@ -33,7 +33,7 @@ dependencies:
   firebase_auth: ^1.0.1
   firebase_core: ^1.0.2
   firebase_storage: ^8.0.0
-  flutter_chat_ui: ^0.7.0
+  flutter_chat_ui: ^0.8.0
   flutter_firebase_chat_core:
     path: ../
   http: ^0.13.1
