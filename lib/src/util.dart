@@ -21,6 +21,7 @@ Future<List<types.Room>> processRoomsQuery(
     var name = doc.get('name') as String?;
     final type = doc.get('type') as String;
     final userIds = doc.get('userIds') as List<dynamic>;
+    final metadata = doc.get('metadata') as Map<String, dynamic>?;
 
     final users = await Future.wait(
       userIds.map(
@@ -48,6 +49,7 @@ Future<List<types.Room>> processRoomsQuery(
       name: name,
       type: type == 'direct' ? types.RoomType.direct : types.RoomType.group,
       users: users,
+      metadata: metadata,
     );
 
     return room;
