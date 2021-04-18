@@ -25,6 +25,7 @@ class FirebaseChatCore {
     String? imageUrl,
     required String name,
     required List<types.User> users,
+    Map<String, dynamic>? metadata,
   }) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
@@ -36,6 +37,7 @@ class FirebaseChatCore {
       'name': name,
       'type': 'group',
       'userIds': roomUsers.map((u) => u.id).toList(),
+      'metadata': metadata
     });
 
     return types.Room(
@@ -44,11 +46,15 @@ class FirebaseChatCore {
       name: name,
       type: types.RoomType.group,
       users: roomUsers,
+      metadata: metadata,
     );
   }
 
   /// Creates a normal room for 2 people
-  Future<types.Room> createRoom(types.User otherUser) async {
+  Future<types.Room> createRoom(
+    types.User otherUser,
+    Map<String, dynamic>? metadata,
+  ) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
@@ -79,12 +85,14 @@ class FirebaseChatCore {
       'name': null,
       'type': 'direct',
       'userIds': users.map((u) => u.id).toList(),
+      'metadata': metadata
     });
 
     return types.Room(
       id: room.id,
       type: types.RoomType.direct,
       users: users,
+      metadata: metadata,
     );
   }
 

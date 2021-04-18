@@ -14,8 +14,13 @@ dependencies:
     sdk: flutter
   cloud_firestore: ^1.0.2
   firebase_auth: ^1.0.1
-  flutter_chat_types: ^2.0.7
   meta: ^1.3.0
+
+dependency_overrides:
+  flutter_chat_types:
+    git:
+      url: https://github.com/alihen/flutter_chat_types.git
+      ref: c307eb58bed4e1f96fda8c6156a3340c609a3027
 
 dev_dependencies:
   flutter_test:
