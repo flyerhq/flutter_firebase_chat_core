@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Fix static analysis warning
+
 ## 1.0.1
 
 - Add metadata to the room class for easier extensibility. Thanks @alihen for the PR!

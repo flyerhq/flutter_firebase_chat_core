@@ -122,14 +122,9 @@ class FirebaseChatCore {
           [],
           (previousValue, element) {
             final data = element.data();
-
-            if (data != null) {
-              data['id'] = element.id;
-              data['timestamp'] = element['timestamp']?.seconds;
-              return [...previousValue, types.Message.fromJson(data)];
-            }
-
-            return previousValue;
+            data['id'] = element.id;
+            data['timestamp'] = element['timestamp']?.seconds;
+            return [...previousValue, types.Message.fromJson(data)];
           },
         );
       },
