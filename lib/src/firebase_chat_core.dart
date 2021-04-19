@@ -20,9 +20,13 @@ class FirebaseChatCore {
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
 
-  /// Creates a chat group room
+  /// Creates a chat group room with [users]. Creator is automatically
+  /// added to the group. [name] is required and will be used as
+  /// a group name. Add an optional [imageUrl] that will be a group avatar
+  /// and [metadata] for any additional custom data.
   Future<types.Room> createGroupRoom({
     String? imageUrl,
+    Map<String, dynamic>? metadata,
     required String name,
     required List<types.User> users,
   }) async {
@@ -33,6 +37,7 @@ class FirebaseChatCore {
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
       'imageUrl': imageUrl,
+      'metadata': metadata,
       'name': name,
       'type': 'group',
       'userIds': roomUsers.map((u) => u.id).toList(),
@@ -41,14 +46,19 @@ class FirebaseChatCore {
     return types.Room(
       id: room.id,
       imageUrl: imageUrl,
+      metadata: metadata,
       name: name,
       type: types.RoomType.group,
       users: roomUsers,
     );
   }
 
-  /// Creates a normal room for 2 people
-  Future<types.Room> createRoom(types.User otherUser) async {
+  /// Creates a direct chat for 2 people. Add [metadata] for any additional
+  /// custom data.
+  Future<types.Room> createRoom(
+    types.User otherUser, {
+    Map<String, dynamic>? metadata,
+  }) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
@@ -76,6 +86,7 @@ class FirebaseChatCore {
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
       'imageUrl': null,
+      'metadata': metadata,
       'name': null,
       'type': 'direct',
       'userIds': users.map((u) => u.id).toList(),
@@ -83,6 +94,7 @@ class FirebaseChatCore {
 
     return types.Room(
       id: room.id,
+      metadata: metadata,
       type: types.RoomType.direct,
       users: users,
     );
@@ -136,6 +148,9 @@ class FirebaseChatCore {
         .asyncMap((query) => processRoomsQuery(firebaseUser!, query));
   }
 
+  /// Sends a message to the Firestore. Accepts any partial message and a
+  /// room ID. If arbitraty data is provided in the [partialMessage]
+  /// does nothing.
   void sendMessage(dynamic partialMessage, String roomId) async {
     if (firebaseUser == null) return;
 
@@ -172,6 +187,8 @@ class FirebaseChatCore {
     }
   }
 
+  /// Updates a message in the Firestore. Accepts any message and a
+  /// room ID. Message will probably be taken from the [messages] stream.
   void updateMessage(types.Message message, String roomId) async {
     if (firebaseUser == null) return;
     if (message.authorId != firebaseUser!.uid) return;

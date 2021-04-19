@@ -17,8 +17,18 @@ Future<List<types.Room>> processRoomsQuery(
   QuerySnapshot query,
 ) async {
   final futures = query.docs.map((doc) async {
-    var imageUrl = doc.get('imageUrl') as String?;
-    var name = doc.get('name') as String?;
+    String? imageUrl;
+    Map<String, dynamic>? metadata;
+    String? name;
+
+    try {
+      imageUrl = doc.get('imageUrl') as String?;
+      metadata = doc.get('metadata') as Map<String, dynamic>?;
+      name = doc.get('name') as String?;
+    } catch (e) {
+      // Ignore errors since all those fields are optional
+    }
+
     final type = doc.get('type') as String;
     final userIds = doc.get('userIds') as List<dynamic>;
 
@@ -45,6 +55,7 @@ Future<List<types.Room>> processRoomsQuery(
     final room = types.Room(
       id: doc.id,
       imageUrl: imageUrl,
+      metadata: metadata,
       name: name,
       type: type == 'direct' ? types.RoomType.direct : types.RoomType.group,
       users: users,

@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Add metadata to the room class for easier extensibility. Thanks @alihen for the PR!
+
 ## 1.0.0
 
 - Public release
