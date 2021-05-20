@@ -1,3 +1,8 @@
+## 1.0.3
+
+- **BREAKING CHANGE**: Updated `cloud_firestore` to version 2
+- Update to Flutter 2.2
+
 ## 1.0.2
 
 - Fix static analysis warning
