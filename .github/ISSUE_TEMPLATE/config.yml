@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Link preview
+    url: https://github.com/flyerhq/flutter_link_previewer/issues/new
+    about: Use this to report link preview issues.
+  - name: Chat UI
+    url: https://github.com/flyerhq/flutter_chat_ui/issues/new/choose
+    about: Use this to report chat UI issues.
