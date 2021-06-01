@@ -129,9 +129,9 @@ class _ChatPageState extends State<ChatPage> {
         final uri = await reference.getDownloadURL();
 
         final message = types.PartialFile(
-          fileName: fileName ?? '',
+          fileName: fileName,
           mimeType: lookupMimeType(filePath ?? ''),
-          size: result.files.single.size ?? 0,
+          size: result.files.single.size,
           uri: uri,
         );
 

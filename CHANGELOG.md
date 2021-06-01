@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Update dependencies
+
 ## 1.0.3
 
 - **BREAKING CHANGE**: Updated `cloud_firestore` to version 2
