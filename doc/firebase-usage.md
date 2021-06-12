@@ -11,15 +11,15 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 await FirebaseChatCore.instance.createUserInFirestore(
   types.User(
-    avatarUrl: 'https://i.pravatar.cc/300',
     firstName: 'Alex',
     id: credential.user!.uid, // UID from Firebase Authentication
+    imageUrl: 'https://i.pravatar.cc/300',
     lastName: 'Demchenko',
   ),
 );
 ```
 
-You can provide values like `avatarUrl`, `firstName` and `lastName` if you're planning to have a screen with all users available for chat. The `id` is the only required field and you **need to** use the `uid` you get from the Firebase Authentication after you register a user. If you don't use Firebase for authentication, you can register a user using your custom `JWT` token, then call `FirebaseChatCore.instance.createUserInFirestore` as described above.
+You can provide values like `firstName`, `imageUrl` and `lastName` if you're planning to have a screen with all users available for chat. The `id` is the only required field and you **need to** use the `uid` you get from the Firebase Authentication after you register a user. If you don't use Firebase for authentication, you can register a user using your custom `JWT` token, then call `FirebaseChatCore.instance.createUserInFirestore` as described above.
 
 Aside from registration, you will need to log users in when appropriate, using available methods from Firebase Authentication, including the custom `JWT` token.
 
@@ -88,7 +88,7 @@ class UsersPage extends StatelessWidget {
 
 ## Rooms
 
-To render user's rooms you use the `FirebaseChatCore.instance.rooms()` stream. `Room` class will have the name and image URL taken either from provided ones for the group or set to the other person's avatar URL and name. See [Security Rules](firebase-rules) for more info about rooms filtering.
+To render user's rooms you use the `FirebaseChatCore.instance.rooms()` stream. `Room` class will have the name and image URL taken either from provided ones for the group or set to the other person's image URL and name. See [Security Rules](firebase-rules) for more info about rooms filtering.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -115,7 +115,7 @@ class RoomsPage extends StatelessWidget {
 
 ## Messages
 
-`FirebaseChatCore.instance.messages` stream will give you access to all messages in the specified room.
+`FirebaseChatCore.instance.messages` stream will give you access to all messages in the specified room. If you want to have dynamic updates for the room itself, you will need to wrap messages stream with a room stream. See the [example](https://github.com/flyerhq/flutter_firebase_chat_core/blob/main/example/lib/chat.dart).
 
 ```dart
 import 'package:flutter/material.dart';
@@ -129,8 +129,8 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<List<types.Message>>(
-        stream: FirebaseChatCore.instance.messages(widget.roomId),
         initialData: const [],
+        stream: FirebaseChatCore.instance.messages(widget.room),
         builder: (context, snapshot) {
           // ...
         },
@@ -146,7 +146,7 @@ If you use Flyer Chat UI you can just pass `snapshot.data ?? []` to the `message
 
 To send a message use `FirebaseChatCore.instance.sendMessage`, it accepts 2 parameters:
 
-* Any partial message. Click [here](/chat-ui/types) to learn more about the types or check the [API reference](https://pub.dev/documentation/flutter_chat_types/latest/index.html). You provide a partial message because Firebase will set fields like `authorId`, `id` and `timestamp` automatically.
+* Any partial message. Click [here](/chat-ui/types) to learn more about the types or check the [API reference](https://pub.dev/documentation/flutter_chat_types/latest/index.html). You provide a partial message because Firebase will set fields like `authorId`, `createdAt` and `id` automatically.
 * Room ID.
 
 ### Update the message

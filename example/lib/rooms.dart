@@ -129,7 +129,7 @@ class _RoomsPageState extends State<RoomsPage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => ChatPage(
-                              roomId: room.id,
+                              room: room,
                             ),
                           ),
                         );

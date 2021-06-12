@@ -65,7 +65,7 @@ service cloud.firestore {
 
         // Validates message's object format
         function isMessageCorrect() {
-      	  return request.resource.data.authorId is string && request.resource.data.timestamp is timestamp;
+          return request.resource.data.authorId is string && request.resource.data.createdAt is timestamp;
         }
 
         // Checks that message's author is currently logged in user

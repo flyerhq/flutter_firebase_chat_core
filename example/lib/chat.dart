@@ -14,10 +14,10 @@ import 'package:path_provider/path_provider.dart';
 class ChatPage extends StatefulWidget {
   const ChatPage({
     Key? key,
-    required this.roomId,
+    required this.room,
   }) : super(key: key);
 
-  final String roomId;
+  final types.Room room;
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -78,7 +78,7 @@ class _ChatPageState extends State<ChatPage> {
         final request = await client.get(Uri.parse(message.uri));
         final bytes = request.bodyBytes;
         final documentsDir = (await getApplicationDocumentsDirectory()).path;
-        localPath = '$documentsDir/${message.fileName}';
+        localPath = '$documentsDir/${message.name}';
 
         if (!File(localPath).existsSync()) {
           final file = File(localPath);
@@ -96,13 +96,13 @@ class _ChatPageState extends State<ChatPage> {
   ) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
-    FirebaseChatCore.instance.updateMessage(updatedMessage, widget.roomId);
+    FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
   void _handleSendPressed(types.PartialText message) {
     FirebaseChatCore.instance.sendMessage(
       message,
-      widget.roomId,
+      widget.room.id,
     );
   }
 
@@ -119,26 +119,23 @@ class _ChatPageState extends State<ChatPage> {
 
     if (result != null) {
       _setAttachmentUploading(true);
-      final fileName = result.files.single.name;
+      final name = result.files.single.name;
       final filePath = result.files.single.path;
       final file = File(filePath ?? '');
 
       try {
-        final reference = FirebaseStorage.instance.ref(fileName);
+        final reference = FirebaseStorage.instance.ref(name);
         await reference.putFile(file);
         final uri = await reference.getDownloadURL();
 
         final message = types.PartialFile(
-          fileName: fileName,
           mimeType: lookupMimeType(filePath ?? ''),
+          name: name,
           size: result.files.single.size,
           uri: uri,
         );
 
-        FirebaseChatCore.instance.sendMessage(
-          message,
-          widget.roomId,
-        );
+        FirebaseChatCore.instance.sendMessage(message, widget.room.id);
         _setAttachmentUploading(false);
       } on FirebaseException catch (e) {
         _setAttachmentUploading(false);
@@ -162,16 +159,16 @@ class _ChatPageState extends State<ChatPage> {
       final size = file.lengthSync();
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
-      final imageName = result.path.split('/').last;
+      final name = result.path.split('/').last;
 
       try {
-        final reference = FirebaseStorage.instance.ref(imageName);
+        final reference = FirebaseStorage.instance.ref(name);
         await reference.putFile(file);
         final uri = await reference.getDownloadURL();
 
         final message = types.PartialImage(
           height: image.height.toDouble(),
-          imageName: imageName,
+          name: name,
           size: size,
           uri: uri,
           width: image.width.toDouble(),
@@ -179,7 +176,7 @@ class _ChatPageState extends State<ChatPage> {
 
         FirebaseChatCore.instance.sendMessage(
           message,
-          widget.roomId,
+          widget.room.id,
         );
         _setAttachmentUploading(false);
       } on FirebaseException catch (e) {
@@ -198,20 +195,26 @@ class _ChatPageState extends State<ChatPage> {
         brightness: Brightness.dark,
         title: const Text('Chat'),
       ),
-      body: StreamBuilder<List<types.Message>>(
-        stream: FirebaseChatCore.instance.messages(widget.roomId),
-        initialData: const [],
+      body: StreamBuilder<types.Room>(
+        initialData: widget.room,
+        stream: FirebaseChatCore.instance.room(widget.room.id),
         builder: (context, snapshot) {
-          return Chat(
-            isAttachmentUploading: _isAttachmentUploading,
-            messages: snapshot.data ?? [],
-            onAttachmentPressed: _handleAtachmentPress,
-            onMessageTap: _handleMessageTap,
-            onPreviewDataFetched: _handlePreviewDataFetched,
-            onSendPressed: _handleSendPressed,
-            user: types.User(
-              id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-            ),
+          return StreamBuilder<List<types.Message>>(
+            initialData: const [],
+            stream: FirebaseChatCore.instance.messages(snapshot.data!),
+            builder: (context, snapshot) {
+              return Chat(
+                isAttachmentUploading: _isAttachmentUploading,
+                messages: snapshot.data ?? [],
+                onAttachmentPressed: _handleAtachmentPress,
+                onMessageTap: _handleMessageTap,
+                onPreviewDataFetched: _handlePreviewDataFetched,
+                onSendPressed: _handleSendPressed,
+                user: types.User(
+                  id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                ),
+              );
+            },
           );
         },
       ),

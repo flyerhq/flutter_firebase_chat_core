@@ -13,7 +13,7 @@ class UsersPage extends StatelessWidget {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ChatPage(
-          roomId: room.id,
+          room: room,
         ),
       ),
     );
@@ -67,7 +67,7 @@ class UsersPage extends StatelessWidget {
                             Radius.circular(20),
                           ),
                           child: Image.network(
-                            user.avatarUrl ?? '',
+                            user.imageUrl ?? '',
                           ),
                         ),
                       ),
