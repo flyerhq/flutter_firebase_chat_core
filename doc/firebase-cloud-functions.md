@@ -41,7 +41,7 @@ exports.changeLastMessage = functions.firestore
     .onWrite((change, context) => {
       const message = change.after.data();
       if (message) {
-        return db.doc("rooms/" + context.params.roomId).set({
+        return db.doc("rooms/" + context.params.roomId).update({
           lastMessage: message,
         });
       } else {
