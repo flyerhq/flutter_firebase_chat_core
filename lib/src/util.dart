@@ -33,6 +33,7 @@ Future<types.Room> processRoomDocument(
   final metadata = doc.data()?['metadata'] as Map<String, dynamic>?;
   var name = doc.data()?['name'] as String?;
   final type = doc.data()!['type'] as String;
+  final updatedAt = doc.data()?['updatedAt'] as Timestamp?;
   final userIds = doc.data()!['userIds'] as List<dynamic>;
   final userRoles = doc.data()?['userRoles'] as Map<String, dynamic>?;
 
@@ -66,6 +67,7 @@ Future<types.Room> processRoomDocument(
     metadata: metadata,
     name: name,
     type: types.getRoomTypeFromString(type),
+    updatedAt: updatedAt?.millisecondsSinceEpoch,
     users: users,
   );
 
@@ -84,6 +86,7 @@ types.User processUserDocument(
   final lastSeen = doc.data()?['lastSeen'] as Timestamp?;
   final metadata = doc.data()?['metadata'] as Map<String, dynamic>?;
   final roleString = doc.data()?['role'] as String?;
+  final updatedAt = doc.data()?['updatedAt'] as Timestamp?;
 
   final user = types.User(
     createdAt: createdAt?.millisecondsSinceEpoch,
@@ -94,6 +97,7 @@ types.User processUserDocument(
     lastSeen: lastSeen?.millisecondsSinceEpoch,
     metadata: metadata,
     role: role ?? types.getRoleFromString(roleString),
+    updatedAt: updatedAt?.millisecondsSinceEpoch,
   );
 
   return user;

@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
   cloud_firestore: ^2.3.0
   firebase_auth: ^2.0.0
-  flutter_chat_types: ^2.3.0
+  flutter_chat_types: ^2.4.0
   meta: ^1.3.0
 
 dev_dependencies:

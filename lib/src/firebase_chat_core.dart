@@ -41,6 +41,7 @@ class FirebaseChatCore {
       'metadata': metadata,
       'name': name,
       'type': types.RoomType.group.toShortString(),
+      'updatedAt': FieldValue.serverTimestamp(),
       'userIds': roomUsers.map((u) => u.id).toList(),
       'userRoles': roomUsers.fold<Map<String, String?>>(
         {},
@@ -98,6 +99,7 @@ class FirebaseChatCore {
       'metadata': metadata,
       'name': null,
       'type': types.RoomType.direct.toShortString(),
+      'updatedAt': FieldValue.serverTimestamp(),
       'userIds': users.map((u) => u.id).toList(),
       'userRoles': null,
     });
@@ -121,6 +123,7 @@ class FirebaseChatCore {
       'lastSeen': user.lastSeen,
       'metadata': user.metadata,
       'role': user.role?.toShortString(),
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 
@@ -142,8 +145,13 @@ class FirebaseChatCore {
             );
 
             data['author'] = author.toJson();
-            data['createdAt'] = element['createdAt']?.millisecondsSinceEpoch;
             data['id'] = element.id;
+            try {
+              data['createdAt'] = element['createdAt']?.millisecondsSinceEpoch;
+              data['updatedAt'] = element['updatedAt']?.millisecondsSinceEpoch;
+            } catch (e) {
+              // Ignore errors, null values are ok
+            }
             data.removeWhere((key, value) => key == 'authorId');
             return [...previousValue, types.Message.fromJson(data)];
           },
@@ -164,13 +172,28 @@ class FirebaseChatCore {
   }
 
   /// Returns a stream of rooms from Firebase. Only rooms where current
-  /// logged in user exist are returned.
-  Stream<List<types.Room>> rooms() {
+  /// logged in user exist are returned. [orderByUpdatedAt] is used in case
+  /// you want to have last modified rooms on top, there are a couple
+  /// of things you will need to do though:
+  /// 1) Make sure `updatedAt` exists on all rooms
+  /// 2) Write a Cloud Function which will update `updatedAt` of the room
+  /// when the room changes or new messages come in
+  /// 3) Create an Index (Firestore Database -> Indexes tab) where collection ID
+  /// is `rooms`, field indexed are `userIds` (type Arrays) and `updatedAt`
+  /// (type Descending), query scope is `Collection`
+  Stream<List<types.Room>> rooms({bool orderByUpdatedAt = false}) {
     if (firebaseUser == null) return const Stream.empty();
 
-    return FirebaseFirestore.instance
-        .collection('rooms')
-        .where('userIds', arrayContains: firebaseUser!.uid)
+    final collection = orderByUpdatedAt
+        ? FirebaseFirestore.instance
+            .collection('rooms')
+            .where('userIds', arrayContains: firebaseUser!.uid)
+            .orderBy('updatedAt', descending: true)
+        : FirebaseFirestore.instance
+            .collection('rooms')
+            .where('userIds', arrayContains: firebaseUser!.uid);
+
+    return collection
         .snapshots()
         .asyncMap((query) => processRoomsQuery(firebaseUser!, query));
   }
@@ -208,6 +231,7 @@ class FirebaseChatCore {
       messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
       messageMap['authorId'] = firebaseUser!.uid;
       messageMap['createdAt'] = FieldValue.serverTimestamp();
+      messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
       await FirebaseFirestore.instance
           .collection('rooms/$roomId/messages')
@@ -223,6 +247,7 @@ class FirebaseChatCore {
 
     final messageMap = message.toJson();
     messageMap.removeWhere((key, value) => key == 'id' || key == 'createdAt');
+    messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
     await FirebaseFirestore.instance
         .collection('rooms/$roomId/messages')
