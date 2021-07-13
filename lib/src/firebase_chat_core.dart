@@ -124,6 +124,11 @@ class FirebaseChatCore {
     });
   }
 
+  /// Removes [types.User] collection in Firebase
+  Future<void> deleteUserFromFirestore(String userId) async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+  }
+
   /// Returns a stream of messages from Firebase for a given room
   Stream<List<types.Message>> messages(types.Room room) {
     return FirebaseFirestore.instance
