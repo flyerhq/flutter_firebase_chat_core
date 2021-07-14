@@ -6,6 +6,7 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'chat.dart';
 import 'login.dart';
 import 'users.dart';
+import 'util.dart';
 
 class RoomsPage extends StatefulWidget {
   const RoomsPage({Key? key}) : super(key: key);
@@ -45,6 +46,40 @@ class _RoomsPageState extends State<RoomsPage> {
 
   void logout() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  Widget _buildAvatar(types.Room room) {
+    var color = Colors.white;
+
+    if (room.type == types.RoomType.direct) {
+      try {
+        final otherUser = room.users.firstWhere(
+          (u) => u.id != _user!.uid,
+        );
+
+        color = getUserAvatarNameColor(otherUser);
+      } catch (e) {
+        // Do nothing if other user is not found
+      }
+    }
+
+    final hasImage = room.imageUrl != null;
+    final name = room.name ?? '';
+
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: CircleAvatar(
+        backgroundColor: color,
+        backgroundImage: hasImage ? NetworkImage(room.imageUrl!) : null,
+        radius: 20,
+        child: !hasImage
+            ? Text(
+                name.isEmpty ? '' : name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.white),
+              )
+            : null,
+      ),
+    );
   }
 
   @override
@@ -141,20 +176,8 @@ class _RoomsPageState extends State<RoomsPage> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              height: 40,
-                              margin: const EdgeInsets.only(
-                                right: 16,
-                              ),
-                              width: 40,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                child: Image.network(room.imageUrl ?? ''),
-                              ),
-                            ),
-                            Text(room.name ?? 'Room'),
+                            _buildAvatar(room),
+                            Text(room.name ?? ''),
                           ],
                         ),
                       ),

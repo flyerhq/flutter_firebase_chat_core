@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'chat.dart';
+import 'util.dart';
 
 class UsersPage extends StatelessWidget {
   const UsersPage({Key? key}) : super(key: key);
@@ -15,6 +16,27 @@ class UsersPage extends StatelessWidget {
         builder: (context) => ChatPage(
           room: room,
         ),
+      ),
+    );
+  }
+
+  Widget _buildAvatar(types.User user) {
+    final color = getUserAvatarNameColor(user);
+    final hasImage = user.imageUrl != null;
+    final name = getUserName(user);
+
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: CircleAvatar(
+        backgroundColor: color,
+        backgroundImage: hasImage ? NetworkImage(user.imageUrl!) : null,
+        radius: 20,
+        child: !hasImage
+            ? Text(
+                name.isEmpty ? '' : name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.white),
+              )
+            : null,
       ),
     );
   }
@@ -56,22 +78,8 @@ class UsersPage extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        height: 40,
-                        margin: const EdgeInsets.only(
-                          right: 16,
-                        ),
-                        width: 40,
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(20),
-                          ),
-                          child: Image.network(
-                            user.imageUrl ?? '',
-                          ),
-                        ),
-                      ),
-                      Text('${user.firstName} ${user.lastName}'),
+                      _buildAvatar(user),
+                      Text(getUserName(user)),
                     ],
                   ),
                 ),
