@@ -1,8 +1,9 @@
 ## 1.1.1
 
 - Update dependencies
-- Add possibility to order rooms by last updated (e.g. show room on top when it has the latest message)
+- Add possibility to order rooms by last updated (e.g. show room on top when it has the latest message). See documentation comment for `rooms` function inside `FirebaseChatCore` class.
 - Fix user avatars inside example if no remote URL is available
+- Add `deleteUserFromFirestore` function. Thanks @SalahAdDin for the PR!
 
 ## 1.1.0
 
