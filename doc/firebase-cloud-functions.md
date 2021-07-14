@@ -38,7 +38,7 @@ const db = admin.firestore();
 
 exports.changeLastMessage = functions.firestore
     .document("rooms/{roomId}/messages/{messageId}")
-    .onWrite((change, context) => {
+    .onUpdate((change, context) => {
       const message = change.after.data();
       if (message) {
         return db.doc("rooms/" + context.params.roomId).update({
