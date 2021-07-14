@@ -127,7 +127,7 @@ class FirebaseChatCore {
     });
   }
 
-  /// Removes [types.User] collection in Firebase
+  /// Removes [types.User] from `users` collection in Firebase
   Future<void> deleteUserFromFirestore(String userId) async {
     await FirebaseFirestore.instance.collection('users').doc(userId).delete();
   }
