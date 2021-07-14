@@ -1,3 +1,9 @@
+## 1.1.1
+
+- Update dependencies
+- Add possibility to order rooms by last updated (e.g. show room on top when it has the latest message)
+- Fix user avatars inside example if no remote URL is available
+
 ## 1.1.0
 
 This release marks a major chat architecture overhaul based on a community feedback. In the future we don't expect such big changes in one release and will try to do backwards compatible code as much as possible.
