@@ -211,7 +211,13 @@ class FirebaseChatCore {
 
     types.Message? message;
 
-    if (partialMessage is types.PartialFile) {
+    if (partialMessage is types.PartialCustom) {
+      message = types.CustomMessage.fromPartial(
+        author: types.User(id: firebaseUser!.uid),
+        id: '',
+        partialCustom: partialMessage,
+      );
+    } else if (partialMessage is types.PartialFile) {
       message = types.FileMessage.fromPartial(
         author: types.User(id: firebaseUser!.uid),
         id: '',

@@ -1,3 +1,8 @@
+## 1.1.4
+
+- Add an option to send metadata
+- Update dependencies
+
 ## 1.1.3
 
 - Update dependencies

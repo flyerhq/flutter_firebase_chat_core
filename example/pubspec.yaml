@@ -29,7 +29,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
   faker: ^2.0.0
-  file_picker: ^3.0.3
+  file_picker: ^4.0.0
   firebase_auth: ^3.0.1
   firebase_core: ^1.4.0
   firebase_storage: ^10.0.1
@@ -37,7 +37,7 @@ dependencies:
   flutter_firebase_chat_core:
     path: ../
   http: ^0.13.3
-  image_picker: ^0.8.2
+  image_picker: ^0.8.3+2
   mime: ^1.0.0
   open_file: ^3.2.1
   path_provider: ^2.0.2
