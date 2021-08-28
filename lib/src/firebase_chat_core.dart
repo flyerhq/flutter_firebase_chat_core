@@ -33,7 +33,7 @@ class FirebaseChatCore {
     if (firebaseUser == null) return Future.error('User does not exist');
 
     final currentUser = await fetchUser(firebaseUser!.uid);
-    final roomUsers = [currentUser] + users;
+    final roomUsers = [types.User.fromJson(currentUser)] + users;
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
       'createdAt': FieldValue.serverTimestamp(),
@@ -91,7 +91,7 @@ class FirebaseChatCore {
     }
 
     final currentUser = await fetchUser(firebaseUser!.uid);
-    final users = [currentUser, otherUser];
+    final users = [types.User.fromJson(currentUser), otherUser];
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
       'createdAt': FieldValue.serverTimestamp(),
@@ -272,10 +272,17 @@ class FirebaseChatCore {
     return FirebaseFirestore.instance.collection('users').snapshots().map(
           (snapshot) => snapshot.docs.fold<List<types.User>>(
             [],
-            (previousValue, element) {
-              if (firebaseUser!.uid == element.id) return previousValue;
+            (previousValue, doc) {
+              if (firebaseUser!.uid == doc.id) return previousValue;
 
-              return [...previousValue, processUserDocument(element)];
+              final data = doc.data();
+
+              data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+              data['id'] = doc.id;
+              data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
+              data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+
+              return [...previousValue, types.User.fromJson(data)];
             },
           ),
         );
