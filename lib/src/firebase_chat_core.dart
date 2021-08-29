@@ -45,9 +45,9 @@ class FirebaseChatCore {
       'userIds': roomUsers.map((u) => u.id).toList(),
       'userRoles': roomUsers.fold<Map<String, String?>>(
         {},
-        (previousValue, element) => {
+        (previousValue, user) => {
           ...previousValue,
-          element.id: element.role?.toShortString(),
+          user.id: user.role?.toShortString(),
         },
       ),
     });
@@ -142,22 +142,18 @@ class FirebaseChatCore {
       (snapshot) {
         return snapshot.docs.fold<List<types.Message>>(
           [],
-          (previousValue, element) {
-            final data = element.data();
+          (previousValue, doc) {
+            final data = doc.data();
             final author = room.users.firstWhere(
               (u) => u.id == data['authorId'],
               orElse: () => types.User(id: data['authorId'] as String),
             );
 
             data['author'] = author.toJson();
-            data['id'] = element.id;
-            try {
-              data['createdAt'] = element['createdAt']?.millisecondsSinceEpoch;
-              data['updatedAt'] = element['updatedAt']?.millisecondsSinceEpoch;
-            } catch (e) {
-              // Ignore errors, null values are ok
-            }
-            data.removeWhere((key, value) => key == 'authorId');
+            data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+            data['id'] = doc.id;
+            data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+
             return [...previousValue, types.Message.fromJson(data)];
           },
         );

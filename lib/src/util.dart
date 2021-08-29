@@ -100,8 +100,8 @@ Future<types.Room> processRoomDocument(
       );
 
       lm['author'] = author;
-      lm['id'] = '';
       lm['createdAt'] = lm['createdAt']?.millisecondsSinceEpoch;
+      lm['id'] = lm['id'] ?? '';
       lm['updatedAt'] = lm['updatedAt']?.millisecondsSinceEpoch;
 
       return lm;
