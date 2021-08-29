@@ -2,12 +2,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
+/// Extension with one [toShortString] method
+extension RoleToShortString on types.Role {
+  /// Converts enum to the string equal to enum's name
+  String toShortString() {
+    return toString().split('.').last;
+  }
+}
+
+/// Extension with one [toShortString] method
+extension RoomTypeToShortString on types.RoomType {
+  /// Converts enum to the string equal to enum's name
+  String toShortString() {
+    return toString().split('.').last;
+  }
+}
+
 /// Fetches user from Firebase and returns a promise
-Future<types.User> fetchUser(String userId, {types.Role? role}) async {
+Future<Map<String, dynamic>> fetchUser(String userId, {String? role}) async {
   final doc =
       await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
-  return processUserDocument(doc, role: role);
+  final data = doc.data()!;
+
+  data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+  data['id'] = doc.id;
+  data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
+  data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+  data['role'] = role;
+
+  return data;
 }
 
 /// Returns a list of [types.Room] created from Firebase query.
@@ -28,20 +52,23 @@ Future<types.Room> processRoomDocument(
   DocumentSnapshot<Map<String, dynamic>> doc,
   User firebaseUser,
 ) async {
-  final createdAt = doc.data()?['createdAt'] as Timestamp?;
-  var imageUrl = doc.data()?['imageUrl'] as String?;
-  final metadata = doc.data()?['metadata'] as Map<String, dynamic>?;
-  var name = doc.data()?['name'] as String?;
-  final type = doc.data()!['type'] as String;
-  final updatedAt = doc.data()?['updatedAt'] as Timestamp?;
-  final userIds = doc.data()!['userIds'] as List<dynamic>;
-  final userRoles = doc.data()?['userRoles'] as Map<String, dynamic>?;
+  final data = doc.data()!;
+
+  data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+  data['id'] = doc.id;
+  data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+
+  var imageUrl = data['imageUrl'] as String?;
+  var name = data['name'] as String?;
+  final type = data['type'] as String;
+  final userIds = data['userIds'] as List<dynamic>;
+  final userRoles = data['userRoles'] as Map<String, dynamic>?;
 
   final users = await Future.wait(
     userIds.map(
       (userId) => fetchUser(
         userId as String,
-        role: types.getRoleFromString(userRoles?[userId] as String?),
+        role: userRoles?[userId] as String?,
       ),
     ),
   );
@@ -49,56 +76,39 @@ Future<types.Room> processRoomDocument(
   if (type == types.RoomType.direct.toShortString()) {
     try {
       final otherUser = users.firstWhere(
-        (u) => u.id != firebaseUser.uid,
+        (u) => u['id'] != firebaseUser.uid,
       );
 
-      imageUrl = otherUser.imageUrl;
-      name = '${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}'.trim();
+      imageUrl = otherUser['imageUrl'] as String?;
+      name = '${otherUser['firstName'] ?? ''} ${otherUser['lastName'] ?? ''}'
+          .trim();
     } catch (e) {
       // Do nothing if other user is not found, because he should be found.
       // Consider falling back to some default values.
     }
   }
 
-  final room = types.Room(
-    createdAt: createdAt?.millisecondsSinceEpoch,
-    id: doc.id,
-    imageUrl: imageUrl,
-    metadata: metadata,
-    name: name,
-    type: types.getRoomTypeFromString(type),
-    updatedAt: updatedAt?.millisecondsSinceEpoch,
-    users: users,
-  );
+  data['imageUrl'] = imageUrl;
+  data['name'] = name;
+  data['users'] = users;
 
-  return room;
-}
+  if (data['lastMessages'] != null) {
+    final lastMessages = data['lastMessages'].map((lm) {
+      final author = users.firstWhere(
+        (u) => u['id'] == lm['authorId'],
+        orElse: () => {'id': lm['authorId'] as String},
+      );
 
-/// Returns a [types.User] created from Firebase document
-types.User processUserDocument(
-  DocumentSnapshot<Map<String, dynamic>> doc, {
-  types.Role? role,
-}) {
-  final createdAt = doc.data()?['createdAt'] as Timestamp?;
-  final firstName = doc.data()?['firstName'] as String?;
-  final imageUrl = doc.data()?['imageUrl'] as String?;
-  final lastName = doc.data()?['lastName'] as String?;
-  final lastSeen = doc.data()?['lastSeen'] as Timestamp?;
-  final metadata = doc.data()?['metadata'] as Map<String, dynamic>?;
-  final roleString = doc.data()?['role'] as String?;
-  final updatedAt = doc.data()?['updatedAt'] as Timestamp?;
+      lm['author'] = author;
+      lm['createdAt'] = lm['createdAt']?.millisecondsSinceEpoch;
+      lm['id'] = lm['id'] ?? '';
+      lm['updatedAt'] = lm['updatedAt']?.millisecondsSinceEpoch;
 
-  final user = types.User(
-    createdAt: createdAt?.millisecondsSinceEpoch,
-    firstName: firstName,
-    id: doc.id,
-    imageUrl: imageUrl,
-    lastName: lastName,
-    lastSeen: lastSeen?.millisecondsSinceEpoch,
-    metadata: metadata,
-    role: role ?? types.getRoleFromString(roleString),
-    updatedAt: updatedAt?.millisecondsSinceEpoch,
-  );
+      return lm;
+    }).toList();
 
-  return user;
+    data['lastMessages'] = lastMessages;
+  }
+
+  return types.Room.fromJson(data);
 }

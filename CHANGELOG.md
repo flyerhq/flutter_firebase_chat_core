@@ -1,3 +1,9 @@
+## 1.3.0
+
+- Set room's `lastMessages`. Thanks @mashegoindustries for reporting!
+- Align version with https://pub.dev/packages/flutter_chat_ui.
+- Update dependencies
+
 ## 1.1.4
 
 - Add an option to send metadata
