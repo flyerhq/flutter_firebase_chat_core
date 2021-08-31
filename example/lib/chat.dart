@@ -80,7 +80,7 @@ class _ChatPageState extends State<ChatPage> {
       _setAttachmentUploading(true);
       final name = result.files.single.name;
       final filePath = result.files.single.path;
-      final file = File(filePath ?? '');
+      final file = File(filePath);
 
       try {
         final reference = FirebaseStorage.instance.ref(name);
@@ -88,7 +88,7 @@ class _ChatPageState extends State<ChatPage> {
         final uri = await reference.getDownloadURL();
 
         final message = types.PartialFile(
-          mimeType: lookupMimeType(filePath ?? ''),
+          mimeType: lookupMimeType(filePath),
           name: name,
           size: result.files.single.size,
           uri: uri,

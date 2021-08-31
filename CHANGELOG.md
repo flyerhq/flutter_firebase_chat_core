@@ -1,3 +1,7 @@
+## 1.3.1
+
+- Update dependencies
+
 ## 1.3.0
 
 - Set room's `lastMessages`. Thanks @mashegoindustries for reporting!
