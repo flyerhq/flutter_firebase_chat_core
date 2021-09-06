@@ -28,8 +28,8 @@ Future<Map<String, dynamic>> fetchUser(String userId, {String? role}) async {
   data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
   data['id'] = doc.id;
   data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
-  data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
   data['role'] = role;
+  data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
 
   return data;
 }

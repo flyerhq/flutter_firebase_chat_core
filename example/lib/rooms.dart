@@ -49,7 +49,7 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   Widget _buildAvatar(types.Room room) {
-    var color = Colors.white;
+    var color = Colors.transparent;
 
     if (room.type == types.RoomType.direct) {
       try {
@@ -69,7 +69,7 @@ class _RoomsPageState extends State<RoomsPage> {
     return Container(
       margin: const EdgeInsets.only(right: 16),
       child: CircleAvatar(
-        backgroundColor: color,
+        backgroundColor: hasImage ? Colors.transparent : color,
         backgroundImage: hasImage ? NetworkImage(room.imageUrl!) : null,
         radius: 20,
         child: !hasImage

@@ -28,7 +28,7 @@ class UsersPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 16),
       child: CircleAvatar(
-        backgroundColor: color,
+        backgroundColor: hasImage ? Colors.transparent : color,
         backgroundImage: hasImage ? NetworkImage(user.imageUrl!) : null,
         radius: 20,
         child: !hasImage
