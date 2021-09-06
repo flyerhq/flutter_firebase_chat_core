@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'firebase_chat_core_config.dart';
 import 'util.dart';
 
 /// Provides access to Firebase chat data. Singleton, use
@@ -11,6 +12,10 @@ class FirebaseChatCore {
       firebaseUser = user;
     });
   }
+
+  /// Config to set custom names for rooms and users collcetions
+  FirebaseChatCoreConfig config =
+      const FirebaseChatCoreConfig('rooms', 'users');
 
   /// Current logged in user in Firebase. Does not update automatically.
   /// Use [FirebaseAuth.authStateChanges] to listen to the state changes.
@@ -35,7 +40,9 @@ class FirebaseChatCore {
     final currentUser = await fetchUser(firebaseUser!.uid);
     final roomUsers = [types.User.fromJson(currentUser)] + users;
 
-    final room = await FirebaseFirestore.instance.collection('rooms').add({
+    final room = await FirebaseFirestore.instance
+        .collection(config.roomsCollectionName)
+        .add({
       'createdAt': FieldValue.serverTimestamp(),
       'imageUrl': imageUrl,
       'metadata': metadata,
@@ -73,7 +80,7 @@ class FirebaseChatCore {
     if (fu == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
-        .collection('rooms')
+        .collection(config.roomsCollectionName)
         .where('userIds', arrayContains: fu.uid)
         .get();
 
@@ -94,7 +101,9 @@ class FirebaseChatCore {
     final currentUser = await fetchUser(fu.uid);
     final users = [types.User.fromJson(currentUser), otherUser];
 
-    final room = await FirebaseFirestore.instance.collection('rooms').add({
+    final room = await FirebaseFirestore.instance
+        .collection(config.roomsCollectionName)
+        .add({
       'createdAt': FieldValue.serverTimestamp(),
       'imageUrl': null,
       'metadata': metadata,
@@ -116,7 +125,10 @@ class FirebaseChatCore {
   /// Creates [types.User] in Firebase to store name and avatar used on
   /// rooms list
   Future<void> createUserInFirestore(types.User user) async {
-    await FirebaseFirestore.instance.collection('users').doc(user.id).set({
+    await FirebaseFirestore.instance
+        .collection(config.usersCollectionName)
+        .doc(user.id)
+        .set({
       'createdAt': FieldValue.serverTimestamp(),
       'firstName': user.firstName,
       'imageUrl': user.imageUrl,
@@ -130,13 +142,16 @@ class FirebaseChatCore {
 
   /// Removes [types.User] from `users` collection in Firebase
   Future<void> deleteUserFromFirestore(String userId) async {
-    await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+    await FirebaseFirestore.instance
+        .collection(config.usersCollectionName)
+        .doc(userId)
+        .delete();
   }
 
   /// Returns a stream of messages from Firebase for a given room
   Stream<List<types.Message>> messages(types.Room room) {
     return FirebaseFirestore.instance
-        .collection('rooms/${room.id}/messages')
+        .collection('${config.roomsCollectionName}/${room.id}/messages')
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
@@ -169,7 +184,7 @@ class FirebaseChatCore {
     if (fu == null) return const Stream.empty();
 
     return FirebaseFirestore.instance
-        .collection('rooms')
+        .collection(config.roomsCollectionName)
         .doc(roomId)
         .snapshots()
         .asyncMap((doc) => processRoomDocument(doc, fu));
@@ -192,11 +207,11 @@ class FirebaseChatCore {
 
     final collection = orderByUpdatedAt
         ? FirebaseFirestore.instance
-            .collection('rooms')
+            .collection(config.roomsCollectionName)
             .where('userIds', arrayContains: fu.uid)
             .orderBy('updatedAt', descending: true)
         : FirebaseFirestore.instance
-            .collection('rooms')
+            .collection(config.roomsCollectionName)
             .where('userIds', arrayContains: fu.uid);
 
     return collection
@@ -246,9 +261,15 @@ class FirebaseChatCore {
       messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
       await FirebaseFirestore.instance
-          .collection('rooms/$roomId/messages')
+          .collection('${config.roomsCollectionName}/$roomId/messages')
           .add(messageMap);
     }
+  }
+
+  /// Sets custom [FirebaseChatCoreConfig] to change default names for rooms
+  /// and users collcetions
+  void setConfig(FirebaseChatCoreConfig firebaseChatCoreConfig) {
+    config = firebaseChatCoreConfig;
   }
 
   /// Updates a message in the Firestore. Accepts any message and a
@@ -264,7 +285,7 @@ class FirebaseChatCore {
     messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
     await FirebaseFirestore.instance
-        .collection('rooms/$roomId/messages')
+        .collection('${config.roomsCollectionName}/$roomId/messages')
         .doc(message.id)
         .update(messageMap);
   }
@@ -272,7 +293,10 @@ class FirebaseChatCore {
   /// Returns a stream of all users from Firebase
   Stream<List<types.User>> users() {
     if (firebaseUser == null) return const Stream.empty();
-    return FirebaseFirestore.instance.collection('users').snapshots().map(
+    return FirebaseFirestore.instance
+        .collection(config.usersCollectionName)
+        .snapshots()
+        .map(
           (snapshot) => snapshot.docs.fold<List<types.User>>(
             [],
             (previousValue, doc) {
