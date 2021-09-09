@@ -68,29 +68,30 @@ class FirebaseChatCore {
     types.User otherUser, {
     Map<String, dynamic>? metadata,
   }) async {
-    if (firebaseUser == null) return Future.error('User does not exist');
+    final fu = firebaseUser;
+
+    if (fu == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
         .collection('rooms')
-        .where('userIds', arrayContains: firebaseUser!.uid)
+        .where('userIds', arrayContains: fu.uid)
         .get();
 
-    final rooms = await processRoomsQuery(firebaseUser!, query);
+    final rooms = await processRoomsQuery(fu, query);
 
     try {
       return rooms.firstWhere((room) {
         if (room.type == types.RoomType.group) return false;
 
         final userIds = room.users.map((u) => u.id);
-        return userIds.contains(firebaseUser!.uid) &&
-            userIds.contains(otherUser.id);
+        return userIds.contains(fu.uid) && userIds.contains(otherUser.id);
       });
     } catch (e) {
       // Do nothing if room does not exist
       // Create a new room instead
     }
 
-    final currentUser = await fetchUser(firebaseUser!.uid);
+    final currentUser = await fetchUser(fu.uid);
     final users = [types.User.fromJson(currentUser), otherUser];
 
     final room = await FirebaseFirestore.instance.collection('rooms').add({
@@ -163,13 +164,15 @@ class FirebaseChatCore {
 
   /// Returns a stream of changes in a room from Firebase
   Stream<types.Room> room(String roomId) {
-    if (firebaseUser == null) return const Stream.empty();
+    final fu = firebaseUser;
+
+    if (fu == null) return const Stream.empty();
 
     return FirebaseFirestore.instance
         .collection('rooms')
         .doc(roomId)
         .snapshots()
-        .asyncMap((doc) => processRoomDocument(doc, firebaseUser!));
+        .asyncMap((doc) => processRoomDocument(doc, fu));
   }
 
   /// Returns a stream of rooms from Firebase. Only rooms where current
@@ -183,20 +186,22 @@ class FirebaseChatCore {
   /// is `rooms`, field indexed are `userIds` (type Arrays) and `updatedAt`
   /// (type Descending), query scope is `Collection`
   Stream<List<types.Room>> rooms({bool orderByUpdatedAt = false}) {
-    if (firebaseUser == null) return const Stream.empty();
+    final fu = firebaseUser;
+
+    if (fu == null) return const Stream.empty();
 
     final collection = orderByUpdatedAt
         ? FirebaseFirestore.instance
             .collection('rooms')
-            .where('userIds', arrayContains: firebaseUser!.uid)
+            .where('userIds', arrayContains: fu.uid)
             .orderBy('updatedAt', descending: true)
         : FirebaseFirestore.instance
             .collection('rooms')
-            .where('userIds', arrayContains: firebaseUser!.uid);
+            .where('userIds', arrayContains: fu.uid);
 
     return collection
         .snapshots()
-        .asyncMap((query) => processRoomsQuery(firebaseUser!, query));
+        .asyncMap((query) => processRoomsQuery(fu, query));
   }
 
   /// Sends a message to the Firestore. Accepts any partial message and a
