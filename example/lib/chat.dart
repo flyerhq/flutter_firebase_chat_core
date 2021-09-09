@@ -97,9 +97,8 @@ class _ChatPageState extends State<ChatPage> {
 
         FirebaseChatCore.instance.sendMessage(message, widget.room.id);
         _setAttachmentUploading(false);
-      } on FirebaseException catch (e) {
+      } finally {
         _setAttachmentUploading(false);
-        print(e);
       }
     }
   }
@@ -137,9 +136,8 @@ class _ChatPageState extends State<ChatPage> {
           widget.room.id,
         );
         _setAttachmentUploading(false);
-      } on FirebaseException catch (e) {
+      } finally {
         _setAttachmentUploading(false);
-        print(e);
       }
     }
   }
@@ -191,7 +189,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const Text('Chat'),
       ),
       body: StreamBuilder<types.Room>(

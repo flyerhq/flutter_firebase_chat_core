@@ -1,3 +1,7 @@
+## 1.4.0
+
+- Update to Flutter 2.5
+
 ## 1.3.2
 
 - Update dependencies

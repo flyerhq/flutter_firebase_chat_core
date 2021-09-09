@@ -65,7 +65,9 @@ class _RegisterPageState extends State<RegisterPage> {
           lastName: _lastName,
         ),
       );
-      Navigator.of(context)..pop()..pop();
+      Navigator.of(context)
+        ..pop()
+        ..pop();
     } catch (e) {
       setState(() {
         _registering = false;
@@ -95,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const Text('Register'),
       ),
       body: SingleChildScrollView(

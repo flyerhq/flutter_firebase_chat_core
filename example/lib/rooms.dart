@@ -114,7 +114,7 @@ class _RoomsPageState extends State<RoomsPage> {
           icon: const Icon(Icons.logout),
           onPressed: _user == null ? null : logout,
         ),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const Text('Rooms'),
       ),
       body: _user == null

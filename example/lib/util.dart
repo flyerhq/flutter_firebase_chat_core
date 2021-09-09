@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
-const COLORS = [
+const colors = [
   Color(0xffff6767),
   Color(0xff66e0da),
   Color(0xfff5a2d9),
@@ -15,8 +15,8 @@ const COLORS = [
 ];
 
 Color getUserAvatarNameColor(types.User user) {
-  final index = user.id.hashCode % COLORS.length;
-  return COLORS[index];
+  final index = user.id.hashCode % colors.length;
+  return colors[index];
 }
 
 String getUserName(types.User user) =>
