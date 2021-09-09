@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
@@ -94,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('Register'),
       ),
       body: SingleChildScrollView(
@@ -110,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                      Radius.circular(8),
                     ),
                   ),
                   labelText: 'Email',
@@ -136,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
+                        Radius.circular(8),
                       ),
                     ),
                     labelText: 'Password',

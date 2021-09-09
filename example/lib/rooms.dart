@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'chat.dart';
@@ -109,11 +110,11 @@ class _RoomsPageState extends State<RoomsPage> {
                   },
           ),
         ],
-        brightness: Brightness.dark,
         leading: IconButton(
           icon: const Icon(Icons.logout),
           onPressed: _user == null ? null : logout,
         ),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('Rooms'),
       ),
       body: _user == null

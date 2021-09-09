@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('Login'),
       ),
       body: SingleChildScrollView(
@@ -89,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                      Radius.circular(8),
                     ),
                   ),
                   labelText: 'Email',
@@ -115,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
+                        Radius.circular(8),
                       ),
                     ),
                     labelText: 'Password',

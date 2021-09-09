@@ -253,7 +253,9 @@ class FirebaseChatCore {
     if (message.author.id != firebaseUser!.uid) return;
 
     final messageMap = message.toJson();
-    messageMap.removeWhere((key, value) => key == 'createdAt' || key == 'id');
+    messageMap.removeWhere(
+        (key, value) => key == 'author' || key == 'createdAt' || key == 'id');
+    messageMap['authorId'] = message.author.id;
     messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
     await FirebaseFirestore.instance
