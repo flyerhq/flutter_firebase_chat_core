@@ -11,10 +11,10 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 await FirebaseChatCore.instance.createUserInFirestore(
   types.User(
-    firstName: 'Alex',
+    firstName: 'John',
     id: credential.user!.uid, // UID from Firebase Authentication
     imageUrl: 'https://i.pravatar.cc/300',
-    lastName: 'Demchenko',
+    lastName: 'Doe',
   ),
 );
 ```

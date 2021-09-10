@@ -1,6 +1,7 @@
 ---
 id: firebase-overview
 title: Overview
+slug: /
 ---
 
 Flyer Chat is a platform for creating in-app chat experiences using Flutter or React Native. This is the documentation for Firebase BaaS implementation for Flutter.
