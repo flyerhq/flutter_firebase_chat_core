@@ -13,9 +13,12 @@ class FirebaseChatCore {
     });
   }
 
-  /// Config to set custom names for rooms and users collcetions
-  FirebaseChatCoreConfig config =
-      const FirebaseChatCoreConfig('rooms', 'users');
+  /// Config to set custom names for rooms and users collections. Also
+  /// see [FirebaseChatCoreConfig].
+  FirebaseChatCoreConfig config = const FirebaseChatCoreConfig(
+    'rooms',
+    'users',
+  );
 
   /// Current logged in user in Firebase. Does not update automatically.
   /// Use [FirebaseAuth.authStateChanges] to listen to the state changes.
@@ -24,6 +27,12 @@ class FirebaseChatCore {
   /// Singleton instance
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
+
+  /// Sets custom config to change default names for rooms
+  /// and users collcetions. Also see [FirebaseChatCoreConfig].
+  void setConfig(FirebaseChatCoreConfig firebaseChatCoreConfig) {
+    config = firebaseChatCoreConfig;
+  }
 
   /// Creates a chat group room with [users]. Creator is automatically
   /// added to the group. [name] is required and will be used as
@@ -37,7 +46,11 @@ class FirebaseChatCore {
   }) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
-    final currentUser = await fetchUser(firebaseUser!.uid);
+    final currentUser = await fetchUser(
+      firebaseUser!.uid,
+      config.usersCollectionName,
+    );
+
     final roomUsers = [types.User.fromJson(currentUser)] + users;
 
     final room = await FirebaseFirestore.instance
@@ -84,7 +97,8 @@ class FirebaseChatCore {
         .where('userIds', arrayContains: fu.uid)
         .get();
 
-    final rooms = await processRoomsQuery(fu, query);
+    final rooms =
+        await processRoomsQuery(fu, query, config.usersCollectionName);
 
     try {
       return rooms.firstWhere((room) {
@@ -98,7 +112,11 @@ class FirebaseChatCore {
       // Create a new room instead
     }
 
-    final currentUser = await fetchUser(fu.uid);
+    final currentUser = await fetchUser(
+      fu.uid,
+      config.usersCollectionName,
+    );
+
     final users = [types.User.fromJson(currentUser), otherUser];
 
     final room = await FirebaseFirestore.instance
@@ -187,7 +205,9 @@ class FirebaseChatCore {
         .collection(config.roomsCollectionName)
         .doc(roomId)
         .snapshots()
-        .asyncMap((doc) => processRoomDocument(doc, fu));
+        .asyncMap(
+          (doc) => processRoomDocument(doc, fu, config.usersCollectionName),
+        );
   }
 
   /// Returns a stream of rooms from Firebase. Only rooms where current
@@ -214,9 +234,13 @@ class FirebaseChatCore {
             .collection(config.roomsCollectionName)
             .where('userIds', arrayContains: fu.uid);
 
-    return collection
-        .snapshots()
-        .asyncMap((query) => processRoomsQuery(fu, query));
+    return collection.snapshots().asyncMap(
+          (query) => processRoomsQuery(
+            fu,
+            query,
+            config.usersCollectionName,
+          ),
+        );
   }
 
   /// Sends a message to the Firestore. Accepts any partial message and a
@@ -264,12 +288,6 @@ class FirebaseChatCore {
           .collection('${config.roomsCollectionName}/$roomId/messages')
           .add(messageMap);
     }
-  }
-
-  /// Sets custom [FirebaseChatCoreConfig] to change default names for rooms
-  /// and users collcetions
-  void setConfig(FirebaseChatCoreConfig firebaseChatCoreConfig) {
-    config = firebaseChatCoreConfig;
   }
 
   /// Updates a message in the Firestore. Accepts any message and a
