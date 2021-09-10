@@ -29,7 +29,7 @@ class FirebaseChatCore {
       FirebaseChatCore._privateConstructor();
 
   /// Sets custom config to change default names for rooms
-  /// and users collcetions. Also see [FirebaseChatCoreConfig].
+  /// and users collections. Also see [FirebaseChatCoreConfig].
   void setConfig(FirebaseChatCoreConfig firebaseChatCoreConfig) {
     config = firebaseChatCoreConfig;
   }
