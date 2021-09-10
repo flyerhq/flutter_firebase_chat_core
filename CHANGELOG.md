@@ -1,3 +1,7 @@
+## 1.4.2
+
+- Add an option to rename default collections, `rooms` and `users`
+
 ## 1.4.1
 
 - Fix release on `pub.dev`
