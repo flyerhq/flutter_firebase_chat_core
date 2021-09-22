@@ -77,10 +77,10 @@ class _ChatPageState extends State<ChatPage> {
       type: FileType.any,
     );
 
-    if (result != null) {
+    if (result != null && result.files.single.path != null) {
       _setAttachmentUploading(true);
       final name = result.files.single.name;
-      final filePath = result.files.single.path;
+      final filePath = result.files.single.path!;
       final file = File(filePath);
 
       try {
