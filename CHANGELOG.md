@@ -1,3 +1,7 @@
+## 1.5.0
+
+- Update dependencies (requires Dart >=2.14.0)
+
 ## 1.4.2
 
 - Add an option to rename default collections, `rooms` and `users`
