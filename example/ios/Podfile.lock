@@ -344,8 +344,8 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.7):
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
-  - cloud_firestore (2.5.4):
-    - Firebase/Firestore (= 8.8.0)
+  - cloud_firestore (3.1.4):
+    - Firebase/Firestore (= 8.9.0)
     - firebase_core
     - Flutter
   - DKImagePickerController/Core (4.3.2):
@@ -382,43 +382,43 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
-  - Firebase/Auth (8.8.0):
+  - Firebase/Auth (8.9.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 8.8.0)
-  - Firebase/CoreOnly (8.8.0):
-    - FirebaseCore (= 8.8.0)
-  - Firebase/Firestore (8.8.0):
+    - FirebaseAuth (~> 8.9.0)
+  - Firebase/CoreOnly (8.9.0):
+    - FirebaseCore (= 8.9.0)
+  - Firebase/Firestore (8.9.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (~> 8.8.0)
-  - Firebase/Storage (8.8.0):
+    - FirebaseFirestore (~> 8.9.0)
+  - Firebase/Storage (8.9.0):
     - Firebase/CoreOnly
-    - FirebaseStorage (~> 8.8.0)
-  - firebase_auth (3.1.4):
-    - Firebase/Auth (= 8.8.0)
+    - FirebaseStorage (~> 8.9.0)
+  - firebase_auth (3.3.3):
+    - Firebase/Auth (= 8.9.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.8.0):
-    - Firebase/CoreOnly (= 8.8.0)
+  - firebase_core (1.10.5):
+    - Firebase/CoreOnly (= 8.9.0)
     - Flutter
-  - firebase_storage (10.0.6):
-    - Firebase/Storage (= 8.8.0)
+  - firebase_storage (10.2.3):
+    - Firebase/Storage (= 8.9.0)
     - firebase_core
     - Flutter
-  - FirebaseAuth (8.8.0):
+  - FirebaseAuth (8.9.0):
     - FirebaseCore (~> 8.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
-    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
+    - GoogleUtilities/Environment (~> 7.6)
     - GTMSessionFetcher/Core (~> 1.5)
-  - FirebaseCore (8.8.0):
+  - FirebaseCore (8.9.0):
     - FirebaseCoreDiagnostics (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.4)
-    - GoogleUtilities/Logger (~> 7.4)
-  - FirebaseCoreDiagnostics (8.8.0):
-    - GoogleDataTransport (~> 9.0)
-    - GoogleUtilities/Environment (~> 7.4)
-    - GoogleUtilities/Logger (~> 7.4)
+    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/Logger (~> 7.6)
+  - FirebaseCoreDiagnostics (8.10.0):
+    - GoogleDataTransport (~> 9.1)
+    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/Logger (~> 7.6)
     - nanopb (~> 2.30908.0)
-  - FirebaseFirestore (8.8.0):
+  - FirebaseFirestore (8.9.1):
     - abseil/algorithm (= 0.20200225.0)
     - abseil/base (= 0.20200225.0)
     - abseil/container/flat_hash_map (= 0.20200225.0)
@@ -431,7 +431,7 @@ PODS:
     - "gRPC-C++ (~> 1.28.0)"
     - leveldb-library (~> 1.22)
     - nanopb (~> 2.30908.0)
-  - FirebaseStorage (8.8.0):
+  - FirebaseStorage (8.9.0):
     - FirebaseCore (~> 8.0)
     - GTMSessionFetcher/Core (~> 1.5)
   - Flutter (1.0.0)
@@ -489,14 +489,14 @@ PODS:
   - nanopb/encode (2.30908.0)
   - open_file (0.0.1):
     - Flutter
-  - path_provider (0.0.1):
+  - path_provider_ios (0.0.1):
     - Flutter
   - PromisesObjC (2.0.0)
   - SDWebImage (5.12.1):
     - SDWebImage/Core (= 5.12.1)
   - SDWebImage/Core (5.12.1)
-  - SwiftyGif (5.4.0)
-  - url_launcher (0.0.1):
+  - SwiftyGif (5.4.1)
+  - url_launcher_ios (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -508,8 +508,8 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - open_file (from `.symlinks/plugins/open_file/ios`)
-  - path_provider (from `.symlinks/plugins/path_provider/ios`)
-  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
@@ -551,27 +551,27 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker/ios"
   open_file:
     :path: ".symlinks/plugins/open_file/ios"
-  path_provider:
-    :path: ".symlinks/plugins/path_provider/ios"
-  url_launcher:
-    :path: ".symlinks/plugins/url_launcher/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
-  cloud_firestore: 814002a5be7dc955deaa18216ebe8c2e8be15d10
+  cloud_firestore: c978a55e0bfc675cdc2291ef7670a69695cc663a
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
-  Firebase: 629510f1a9ddb235f3a7c5c8ceb23ba887f0f814
-  firebase_auth: 0b7168e2db1bff6e5b40a7dc268447b8dedb59c1
-  firebase_core: 3b4c707f5a8eff38f52fd5580895bcd89357bf42
-  firebase_storage: aee188c71bcc3c68fa6a9efa2625b92f677991be
-  FirebaseAuth: bcf0adeff88bda5dcb3beeabe5760f1226ab7b2f
-  FirebaseCore: 98b29e3828f0a53651c363937a7f7d92a19f1ba2
-  FirebaseCoreDiagnostics: fe77f42da6329d6d83d21fd9d621a6b704413bfc
-  FirebaseFirestore: 29baf05d5e7e0d5003eb34e5805d92b9858b36d4
-  FirebaseStorage: 54ff752ecbd27f1c354c3f5e8c55f6ad5783699b
+  Firebase: 13d8d96499e2635428d5bf0ec675df21f95d9a95
+  firebase_auth: fe3a1deb12ebd850295344234abc15588d086baf
+  firebase_core: dfcae4c150a5e24436a0b7677c470478a234d5bf
+  firebase_storage: 41d59adeff37c548e167ecbfa834d2d038e6ad87
+  FirebaseAuth: 2b78b2a32c07b3ecfa4970bdf1d3632b8304099b
+  FirebaseCore: 599ee609343eaf4941bd188f85e3aa077ffe325b
+  FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
+  FirebaseFirestore: 15ae9648476436efed698a909e44c4737498f9b4
+  FirebaseStorage: 452c98c31ccb40b819764bf3039426c4388d9939
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
@@ -582,11 +582,11 @@ SPEC CHECKSUMS:
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
-  path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
+  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   SDWebImage: 4dc3e42d9ec0c1028b960a33ac6b637bb432207b
-  SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
-  url_launcher: b6e016d912f04be9f5bf6e8e82dc599b7ba59649
+  SwiftyGif: 6895c887f5551618a3c5dd3ecb512419105bacca
+  url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 

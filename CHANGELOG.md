@@ -1,3 +1,7 @@
+## 1.5.1
+
+- Update dependencies
+
 ## 1.5.0
 
 - Update dependencies (requires Dart >=2.14.0)
