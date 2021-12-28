@@ -177,7 +177,7 @@ class FirebaseChatCore {
   /// Removes message document
   Future<void> deleteMessage(String roomId, String messageId) async {
     await FirebaseFirestore.instance
-        .collection('${config.roomsCollectionName}/$roomId')
+        .collection('${config.roomsCollectionName}/$roomId/messages')
         .doc(messageId)
         .delete();
   }
