@@ -20,14 +20,12 @@ extension RoomTypeToShortString on types.RoomType {
 
 /// Fetches user from Firebase and returns a promise
 Future<Map<String, dynamic>> fetchUser(
+  FirebaseFirestore instance,
   String userId,
   String usersCollectionName, {
   String? role,
 }) async {
-  final doc = await FirebaseFirestore.instance
-      .collection(usersCollectionName)
-      .doc(userId)
-      .get();
+  final doc = await instance.collection(usersCollectionName).doc(userId).get();
 
   final data = doc.data()!;
 
@@ -44,6 +42,7 @@ Future<Map<String, dynamic>> fetchUser(
 /// If room has 2 participants, sets correct room name and image.
 Future<List<types.Room>> processRoomsQuery(
   User firebaseUser,
+  FirebaseFirestore instance,
   QuerySnapshot<Map<String, dynamic>> query,
   String usersCollectionName,
 ) async {
@@ -51,6 +50,7 @@ Future<List<types.Room>> processRoomsQuery(
     (doc) => processRoomDocument(
       doc,
       firebaseUser,
+      instance,
       usersCollectionName,
     ),
   );
@@ -62,6 +62,7 @@ Future<List<types.Room>> processRoomsQuery(
 Future<types.Room> processRoomDocument(
   DocumentSnapshot<Map<String, dynamic>> doc,
   User firebaseUser,
+  FirebaseFirestore instance,
   String usersCollectionName,
 ) async {
   final data = doc.data()!;
@@ -79,6 +80,7 @@ Future<types.Room> processRoomDocument(
   final users = await Future.wait(
     userIds.map(
       (userId) => fetchUser(
+        instance,
         userId as String,
         usersCollectionName,
         role: userRoles?[userId] as String?,

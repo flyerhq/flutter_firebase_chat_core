@@ -1,3 +1,11 @@
+## 1.5.2
+
+- Add an option to specify a custom Firebase app through the config. Thanks @valas69 for reporting!
+- Add `deleteRoom` and `deleteMessage` methods. Thanks @foxdev-flutter for the PR!
+- Add some pagination properties to the query. Thanks @awesomejerry for the PR!
+- Add `updateRoom` method
+- Update dependencies. Requires Dart >= 2.15.1.
+
 ## 1.5.1
 
 - Update dependencies
