@@ -167,12 +167,34 @@ class FirebaseChatCore {
   }
 
   /// Returns a stream of messages from Firebase for a given room
-  Stream<List<types.Message>> messages(types.Room room) {
-    return FirebaseFirestore.instance
+  Stream<List<types.Message>> messages(
+    types.Room room, {
+    int? limit,
+    List<Object?>? startAt,
+    List<Object?>? endAt,
+    List<Object?>? startAfter,
+    List<Object?>? endBefore,
+  }) {
+    var query = FirebaseFirestore.instance
         .collection('${config.roomsCollectionName}/${room.id}/messages')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map(
+        .orderBy('createdAt', descending: true);
+
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+    if (startAt != null) {
+      query = query.startAt(startAt);
+    }
+    if (endAt != null) {
+      query = query.endAt(endAt);
+    }
+    if (startAfter != null) {
+      query = query.startAfter(startAfter);
+    }
+    if (endBefore != null) {
+      query = query.endBefore(endBefore);
+    }
+    return query.snapshots().map(
       (snapshot) {
         return snapshot.docs.fold<List<types.Message>>(
           [],
