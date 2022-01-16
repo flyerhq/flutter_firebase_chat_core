@@ -166,6 +166,22 @@ class FirebaseChatCore {
         .delete();
   }
 
+  /// Removes room document
+  Future<void> deleteRoom(String roomId) async {
+    await FirebaseFirestore.instance
+        .collection(config.roomsCollectionName)
+        .doc(roomId)
+        .delete();
+  }
+
+  /// Removes message document
+  Future<void> deleteMessage(String roomId, String messageId) async {
+    await FirebaseFirestore.instance
+        .collection('${config.roomsCollectionName}/$roomId/messages')
+        .doc(messageId)
+        .delete();
+  }
+
   /// Returns a stream of messages from Firebase for a given room
   Stream<List<types.Message>> messages(
     types.Room room, {
