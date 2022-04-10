@@ -1,3 +1,8 @@
+## 1.5.6
+
+- Align version with Flutter Chat UI
+- Update to Flutter 2.10.4. Requires Dart >= 2.16.0.
+
 ## 1.5.2
 
 - Add an option to specify a custom Firebase app through the config. Thanks @valas69 for reporting!
