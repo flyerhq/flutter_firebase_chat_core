@@ -15,6 +15,12 @@
 <br>
 
 <p align="center">
+  ⚠️⚠️ Recommended for small or PoC projects, might not be optimized for large amounts of data. I suggest to use this on a free Spark plan, otherwise be extremely cautious. ⚠️⚠️
+</p>
+
+<br>
+
+<p align="center">
   <a href="https://pub.dartlang.org/packages/flutter_firebase_chat_core">
     <img alt="Pub" src="https://img.shields.io/pub/v/flutter_firebase_chat_core" />
   </a>
