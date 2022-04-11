@@ -1,7 +1,7 @@
-## 1.5.7
+## 1.5.3
 
-- Align version with Flutter Chat UI
 - Update to Flutter 2.10.4. Requires Dart >= 2.16.0.
+- Update dependencies
 
 ## 1.5.2
 
