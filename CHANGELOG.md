@@ -1,3 +1,8 @@
+## 1.5.4
+
+- Fix `lastSeen` user property when using `createUserInFirestore`. Thanks @AcnoSaga for reporting!
+- Update dependencies
+
 ## 1.5.3
 
 - Update to Flutter 2.10.4. Requires Dart >= 2.16.0.

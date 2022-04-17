@@ -200,18 +200,15 @@ class _ChatPageState extends State<ChatPage> {
             initialData: const [],
             stream: FirebaseChatCore.instance.messages(snapshot.data!),
             builder: (context, snapshot) {
-              return SafeArea(
-                bottom: false,
-                child: Chat(
-                  isAttachmentUploading: _isAttachmentUploading,
-                  messages: snapshot.data ?? [],
-                  onAttachmentPressed: _handleAtachmentPressed,
-                  onMessageTap: _handleMessageTap,
-                  onPreviewDataFetched: _handlePreviewDataFetched,
-                  onSendPressed: _handleSendPressed,
-                  user: types.User(
-                    id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                  ),
+              return Chat(
+                isAttachmentUploading: _isAttachmentUploading,
+                messages: snapshot.data ?? [],
+                onAttachmentPressed: _handleAtachmentPressed,
+                onMessageTap: _handleMessageTap,
+                onPreviewDataFetched: _handlePreviewDataFetched,
+                onSendPressed: _handleSendPressed,
+                user: types.User(
+                  id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
                 ),
               );
             },
