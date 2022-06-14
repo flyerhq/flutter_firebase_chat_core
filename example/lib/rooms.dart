@@ -10,10 +10,10 @@ import 'users.dart';
 import 'util.dart';
 
 class RoomsPage extends StatefulWidget {
-  const RoomsPage({Key? key}) : super(key: key);
+  const RoomsPage({super.key});
 
   @override
-  _RoomsPageState createState() => _RoomsPageState();
+  State<RoomsPage> createState() => _RoomsPageState();
 }
 
 class _RoomsPageState extends State<RoomsPage> {

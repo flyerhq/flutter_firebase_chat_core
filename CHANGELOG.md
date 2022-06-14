@@ -1,3 +1,8 @@
+## 1.6.0
+
+- Update to Flutter 3
+- Update a room `updatedAt` when a new message is sent. Thanks @rootd for the PR!
+
 ## 1.5.4
 
 - Fix `lastSeen` user property when using `createUserInFirestore`. Thanks @AcnoSaga for reporting!

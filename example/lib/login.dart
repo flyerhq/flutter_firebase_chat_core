@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'register.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -44,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _usernameController!.text,
         password: _passwordController!.text,
       );
+      if (!mounted) return;
       Navigator.of(context).pop();
     } catch (e) {
       setState(() {

@@ -14,14 +14,14 @@ import 'package:path_provider/path_provider.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({
-    Key? key,
+    super.key,
     required this.room,
-  }) : super(key: key);
+  });
 
   final types.Room room;
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {

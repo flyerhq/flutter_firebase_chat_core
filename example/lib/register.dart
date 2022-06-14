@@ -6,10 +6,10 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
@@ -65,6 +65,8 @@ class _RegisterPageState extends State<RegisterPage> {
           lastName: _lastName,
         ),
       );
+
+      if (!mounted) return;
       Navigator.of(context)
         ..pop()
         ..pop();

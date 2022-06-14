@@ -6,13 +6,14 @@ import 'chat.dart';
 import 'util.dart';
 
 class UsersPage extends StatelessWidget {
-  const UsersPage({Key? key}) : super(key: key);
+  const UsersPage({super.key});
 
   void _handlePressed(types.User otherUser, BuildContext context) async {
+    final navigator = Navigator.of(context);
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
 
-    Navigator.of(context).pop();
-    await Navigator.of(context).push(
+    navigator.pop();
+    await navigator.push(
       MaterialPageRoute(
         builder: (context) => ChatPage(
           room: room,
