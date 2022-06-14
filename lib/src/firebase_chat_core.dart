@@ -54,7 +54,7 @@ class FirebaseChatCore {
     Map<String, dynamic>? metadata,
     required String name,
     required List<types.User> users,
-    bool creatorIsAdmin = true
+    types.Role creatorRole = types.Role.admin
   }) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
@@ -62,7 +62,7 @@ class FirebaseChatCore {
       getFirebaseFirestore(),
       firebaseUser!.uid,
       config.usersCollectionName,
-      role: creatorIsAdmin ? types.Role.admin.toShortString() : null
+      role: creatorRole.toShortString()
     );
 
     final roomUsers = [types.User.fromJson(currentUser)] + users;
@@ -85,8 +85,6 @@ class FirebaseChatCore {
         },
       ),
     });
-    
-    print(roomUsers.map((e) => e.role.toString()));
 
     return types.Room(
       id: room.id,
