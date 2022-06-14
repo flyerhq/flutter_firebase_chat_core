@@ -353,6 +353,13 @@ class FirebaseChatCore {
       await getFirebaseFirestore()
           .collection('${config.roomsCollectionName}/$roomId/messages')
           .add(messageMap);
+      
+      await getFirebaseFirestore()
+          .collection('${config.roomsCollectionName}')
+          .doc('$roomId')
+          .update({
+            "updatedAt": FieldValue.serverTimestamp(),
+      });
     }
   }
 
