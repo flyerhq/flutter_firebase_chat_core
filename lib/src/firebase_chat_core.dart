@@ -50,11 +50,11 @@ class FirebaseChatCore {
   /// a group name. Add an optional [imageUrl] that will be a group avatar
   /// and [metadata] for any additional custom data.
   Future<types.Room> createGroupRoom({
+    types.Role creatorRole = types.Role.admin,
     String? imageUrl,
     Map<String, dynamic>? metadata,
     required String name,
     required List<types.User> users,
-    types.Role creatorRole = types.Role.admin
   }) async {
     if (firebaseUser == null) return Future.error('User does not exist');
 
@@ -62,7 +62,7 @@ class FirebaseChatCore {
       getFirebaseFirestore(),
       firebaseUser!.uid,
       config.usersCollectionName,
-      role: creatorRole.toShortString()
+      role: creatorRole.toShortString(),
     );
 
     final roomUsers = [types.User.fromJson(currentUser)] + users;
