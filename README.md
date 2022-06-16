@@ -54,44 +54,9 @@ Flyer Chat is a platform for creating in-app chat experiences using Flutter or [
 
 ### Requirements
 
-`Dart >=2.16.0` and `Flutter >=2.0.0`, [Firebase](https://firebase.google.com) project.
+`Dart >=2.17.0` and `Flutter >=2.0.0`, [Firebase](https://firebase.google.com) project.
 
-Read our [documentation](https://docs.flyer.chat/flutter/firebase/firebase-overview) or see the [example](https://github.com/flyerhq/flutter_firebase_chat_core/tree/main/example) project. To run the example project you need to have your own [Firebase](https://firebase.google.com) project and depending on the platform you want to:
-
-1. Create an iOS app with a bundle ID `com.example` (*only required for the example project, you can use anything for your app*) in [Firebase console](https://console.firebase.google.com) of your project and download generated `GoogleService-Info.plist`. Put it in the `example/ios/Runner` folder. You don't need to open Xcode to do it, it will expect this file in this folder.
-2. Create an Android app with package name `com.example` (*only required for the example project, you can use anything for your app*) in [Firebase console](https://console.firebase.google.com) of your project and download generated `google-services.json`. Put it in the `example/android/app` folder.
-3. Create a web app in [Firebase console](https://console.firebase.google.com) of your project. You will see a script that will look like this
-
-```html
- <!-- Firebase Configuration -->
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "...",
-    authDomain: "[YOUR_PROJECT].firebaseapp.com",
-    projectId: "[YOUR_PROJECT]",
-    storageBucket: "[YOUR_PROJECT].appspot.com",
-    messagingSenderId: "...",
-    appId: "1:...:web:..."
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-</script>
-```
-Create a `firebase-config.js` file in the `example/web` folder and put there only js part like this
-
-```js
-var firebaseConfig = {
-  apiKey: "...",
-  authDomain: "[YOUR_PROJECT].firebaseapp.com",
-  projectId: "[YOUR_PROJECT]",
-  storageBucket: "[YOUR_PROJECT].appspot.com",
-  messagingSenderId: "...",
-  appId: "1:...:web:..."
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-```
+Read our [documentation](https://docs.flyer.chat/flutter/firebase/firebase-overview) or see the [example](https://github.com/flyerhq/flutter_firebase_chat_core/tree/main/example) project. To run the example project you need to have your own [Firebase](https://firebase.google.com) project and then follow steps 1 and 2 of [Add Firebase to your Flutter app](https://firebase.google.com/docs/flutter/setup).
 
 After all of this is done you will need to register a couple of users and the example app will automatically suggest email and password on the register screen, default password is `Qawsed1-`. To set up [Firebase Security Rules](https://firebase.google.com/docs/rules) so users can see only the data they should see, continue with our [documentation](https://docs.flyer.chat/flutter/firebase/firebase-rules).
 

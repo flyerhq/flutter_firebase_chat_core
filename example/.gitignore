@@ -50,3 +50,4 @@ app.*.map.json
 firebase-config.js
 GoogleService-Info.plist
 google-services.json
+firebase_app_id_file.json
