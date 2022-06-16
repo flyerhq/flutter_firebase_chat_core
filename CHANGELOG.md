@@ -1,3 +1,8 @@
+## 1.6.1
+
+- Update example to work with FlutterFire CLI
+- When creating a group chat set the creator to `admin` by default. Thanks @adetayoadeyemi for the PR!
+
 ## 1.6.0
 
 - Update to Flutter 3
