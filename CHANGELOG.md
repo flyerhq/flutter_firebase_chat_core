@@ -1,3 +1,7 @@
+## 1.6.2
+
+- Code refactor
+
 ## 1.6.1
 
 - Update example to work with FlutterFire CLI

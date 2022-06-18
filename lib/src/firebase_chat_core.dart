@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+
 import 'firebase_chat_core_config.dart';
 import 'util.dart';
 
@@ -26,18 +27,16 @@ class FirebaseChatCore {
   /// Use [FirebaseAuth.authStateChanges] to listen to the state changes.
   User? firebaseUser = FirebaseAuth.instance.currentUser;
 
-  /// Singleton instance
+  /// Singleton instance.
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
 
-  /// Gets proper [FirebaseFirestore] instance
-  FirebaseFirestore getFirebaseFirestore() {
-    return config.firebaseAppName != null
-        ? FirebaseFirestore.instanceFor(
-            app: Firebase.app(config.firebaseAppName!),
-          )
-        : FirebaseFirestore.instance;
-  }
+  /// Gets proper [FirebaseFirestore] instance.
+  FirebaseFirestore getFirebaseFirestore() => config.firebaseAppName != null
+      ? FirebaseFirestore.instanceFor(
+          app: Firebase.app(config.firebaseAppName!),
+        )
+      : FirebaseFirestore.instance;
 
   /// Sets custom config to change default names for rooms
   /// and users collections. Also see [FirebaseChatCoreConfig].
@@ -177,7 +176,7 @@ class FirebaseChatCore {
     });
   }
 
-  /// Removes message document
+  /// Removes message document.
   Future<void> deleteMessage(String roomId, String messageId) async {
     await getFirebaseFirestore()
         .collection('${config.roomsCollectionName}/$roomId/messages')
@@ -185,7 +184,7 @@ class FirebaseChatCore {
         .delete();
   }
 
-  /// Removes room document
+  /// Removes room document.
   Future<void> deleteRoom(String roomId) async {
     await getFirebaseFirestore()
         .collection(config.roomsCollectionName)
@@ -193,7 +192,7 @@ class FirebaseChatCore {
         .delete();
   }
 
-  /// Removes [types.User] from `users` collection in Firebase
+  /// Removes [types.User] from `users` collection in Firebase.
   Future<void> deleteUserFromFirestore(String userId) async {
     await getFirebaseFirestore()
         .collection(config.usersCollectionName)
@@ -201,7 +200,7 @@ class FirebaseChatCore {
         .delete();
   }
 
-  /// Returns a stream of messages from Firebase for a given room
+  /// Returns a stream of messages from Firebase for a given room.
   Stream<List<types.Message>> messages(
     types.Room room, {
     List<Object?>? endAt,
@@ -235,29 +234,27 @@ class FirebaseChatCore {
     }
 
     return query.snapshots().map(
-      (snapshot) {
-        return snapshot.docs.fold<List<types.Message>>(
-          [],
-          (previousValue, doc) {
-            final data = doc.data();
-            final author = room.users.firstWhere(
-              (u) => u.id == data['authorId'],
-              orElse: () => types.User(id: data['authorId'] as String),
-            );
+          (snapshot) => snapshot.docs.fold<List<types.Message>>(
+            [],
+            (previousValue, doc) {
+              final data = doc.data();
+              final author = room.users.firstWhere(
+                (u) => u.id == data['authorId'],
+                orElse: () => types.User(id: data['authorId'] as String),
+              );
 
-            data['author'] = author.toJson();
-            data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
-            data['id'] = doc.id;
-            data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+              data['author'] = author.toJson();
+              data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+              data['id'] = doc.id;
+              data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
 
-            return [...previousValue, types.Message.fromJson(data)];
-          },
+              return [...previousValue, types.Message.fromJson(data)];
+            },
+          ),
         );
-      },
-    );
   }
 
-  /// Returns a stream of changes in a room from Firebase
+  /// Returns a stream of changes in a room from Firebase.
   Stream<types.Room> room(String roomId) {
     final fu = firebaseUser;
 
@@ -359,7 +356,7 @@ class FirebaseChatCore {
       await getFirebaseFirestore()
           .collection(config.roomsCollectionName)
           .doc(roomId)
-          .update({"updatedAt": FieldValue.serverTimestamp()});
+          .update({'updatedAt': FieldValue.serverTimestamp()});
     }
   }
 
@@ -371,7 +368,8 @@ class FirebaseChatCore {
 
     final messageMap = message.toJson();
     messageMap.removeWhere(
-        (key, value) => key == 'author' || key == 'createdAt' || key == 'id');
+      (key, value) => key == 'author' || key == 'createdAt' || key == 'id',
+    );
     messageMap['authorId'] = message.author.id;
     messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
@@ -420,7 +418,7 @@ class FirebaseChatCore {
         .update(roomMap);
   }
 
-  /// Returns a stream of all users from Firebase
+  /// Returns a stream of all users from Firebase.
   Stream<List<types.User>> users() {
     if (firebaseUser == null) return const Stream.empty();
     return getFirebaseFirestore()

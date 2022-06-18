@@ -2,23 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
-/// Extension with one [toShortString] method
+/// Extension with one [toShortString] method.
 extension RoleToShortString on types.Role {
-  /// Converts enum to the string equal to enum's name
-  String toShortString() {
-    return toString().split('.').last;
-  }
+  /// Converts enum to the string equal to enum's name.
+  String toShortString() => toString().split('.').last;
 }
 
-/// Extension with one [toShortString] method
+/// Extension with one [toShortString] method.
 extension RoomTypeToShortString on types.RoomType {
-  /// Converts enum to the string equal to enum's name
-  String toShortString() {
-    return toString().split('.').last;
-  }
+  /// Converts enum to the string equal to enum's name.
+  String toShortString() => toString().split('.').last;
 }
 
-/// Fetches user from Firebase and returns a promise
+/// Fetches user from Firebase and returns a promise.
 Future<Map<String, dynamic>> fetchUser(
   FirebaseFirestore instance,
   String userId,
@@ -58,7 +54,7 @@ Future<List<types.Room>> processRoomsQuery(
   return await Future.wait(futures);
 }
 
-/// Returns a [types.Room] created from Firebase document
+/// Returns a [types.Room] created from Firebase document.
 Future<types.Room> processRoomDocument(
   DocumentSnapshot<Map<String, dynamic>> doc,
   User firebaseUser,
