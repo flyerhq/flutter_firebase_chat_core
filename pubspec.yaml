@@ -16,7 +16,7 @@ dependencies:
   firebase_core: ^1.18.0
   flutter:
     sdk: flutter
-  flutter_chat_types: ^3.4.2
+  flutter_chat_types: ^3.4.3
   meta: ^1.7.0
 
 dev_dependencies:
