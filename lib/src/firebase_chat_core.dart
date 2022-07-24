@@ -105,51 +105,51 @@ class FirebaseChatCore {
 
     if (fu == null) return Future.error('User does not exist');
 
-    //auto sort the two users id to always make the same array for both users
-    //this make it to easy to find the room if exist and make one read only
+    // Sort two user ids array to always have the same array for both users,
+    // this will make it easy to find the room if exist and make one read only.
     final userIds = [fu.uid, otherUser.id]..sort();
 
-    final query = await getFirebaseFirestore()
+    final roomQuery = await getFirebaseFirestore()
         .collection(config.roomsCollectionName)
+        .where('type', isEqualTo: types.RoomType.direct.toShortString())
         .where('userIds', isEqualTo: userIds)
         .limit(1)
         .get();
 
-    //check if the room is exist
-    if (query.docs.isNotEmpty) {
+    // Check if room already exist.
+    if (roomQuery.docs.isNotEmpty) {
       final room = (await processRoomsQuery(
         fu,
         getFirebaseFirestore(),
-        query,
+        roomQuery,
         config.usersCollectionName,
-      )).first;
+      ))
+          .first;
+
       return room;
     }
-    //to support the old chats created without sort the array
-    // try to check the room by revers users ids array
-    final queryForOldRoom = await getFirebaseFirestore()
+
+    // To support old chats created without sorted array,
+    // try to check the room by reversing user ids array.
+    final oldRoomQuery = await getFirebaseFirestore()
         .collection(config.roomsCollectionName)
+        .where('type', isEqualTo: types.RoomType.direct.toShortString())
         .where('userIds', isEqualTo: userIds.reversed.toList())
         .limit(1)
         .get();
 
-    //check if the room is exist
-    if (queryForOldRoom.docs.isNotEmpty) {
-      //we can edit the user ids array here to be with the new way
-      // but it will need user to have permission to edit the room
-      // await getFirebaseFirestore().collection(config.roomsCollectionName)
-      //     .doc(queryForOldRoom.docs.first.id).update({'userIds': userIds});
-
+    // Check if room already exist.
+    if (oldRoomQuery.docs.isNotEmpty) {
       final room = (await processRoomsQuery(
         fu,
         getFirebaseFirestore(),
-        queryForOldRoom,
+        oldRoomQuery,
         config.usersCollectionName,
-      )).first;
+      ))
+          .first;
+
       return room;
     }
-
-
 
     final currentUser = await fetchUser(
       getFirebaseFirestore(),
@@ -159,8 +159,8 @@ class FirebaseChatCore {
 
     final users = [types.User.fromJson(currentUser), otherUser];
 
-    // create new room with sorted users ids array
-    final createdRoom = await getFirebaseFirestore()
+    // Create new room with sorted user ids array.
+    final room = await getFirebaseFirestore()
         .collection(config.roomsCollectionName)
         .add({
       'createdAt': FieldValue.serverTimestamp(),
@@ -174,7 +174,7 @@ class FirebaseChatCore {
     });
 
     return types.Room(
-      id: createdRoom.id,
+      id: room.id,
       metadata: metadata,
       type: types.RoomType.direct,
       users: users,
