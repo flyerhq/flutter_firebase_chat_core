@@ -47,7 +47,5 @@ app.*.map.json
 /android/app/release
 
 # Firebase
-firebase-config.js
-GoogleService-Info.plist
 google-services.json
 firebase_app_id_file.json
