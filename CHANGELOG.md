@@ -1,3 +1,9 @@
+## 1.6.3
+
+- Decrease amount of DB reads for the create room call. Thanks @gmgm60 for the PR!
+- Update docs. Thanks @lrsvmb for the PR!
+- Update dependencies
+
 ## 1.6.2
 
 - Code refactor
