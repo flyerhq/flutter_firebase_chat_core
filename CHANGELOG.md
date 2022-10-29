@@ -1,3 +1,7 @@
+## 1.6.4
+
+- Update dependencies. Requires Dart >= 2.18.0.
+
 ## 1.6.3
 
 - Decrease amount of DB reads for the create room call. Thanks @gmgm60 for the PR!

@@ -60,7 +60,7 @@ Flyer Chat is a platform for creating in-app chat experiences using Flutter or [
 
 ### Requirements
 
-`Dart >=2.17.0` and `Flutter >=2.0.0`, [Firebase](https://firebase.google.com) project.
+`Dart >=2.18.0` and `Flutter >=2.0.0`, [Firebase](https://firebase.google.com) project.
 
 Read our [documentation](https://docs.flyer.chat/flutter/firebase/firebase-overview) or see the [example](https://github.com/flyerhq/flutter_firebase_chat_core/tree/main/example) project. To run the example project you need to have your own [Firebase](https://firebase.google.com) project and then follow steps 1 and 2 of [Add Firebase to your Flutter app](https://firebase.google.com/docs/flutter/setup), override `firebase_options.dart`, don't commit it though 😉
 

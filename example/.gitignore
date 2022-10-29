@@ -32,9 +32,6 @@ migrate_working_dir/
 .pub/
 /build/
 
-# Web related
-lib/generated_plugin_registrant.dart
-
 # Symbolication related
 app.*.symbols
 
@@ -47,5 +44,6 @@ app.*.map.json
 /android/app/release
 
 # Firebase
+GoogleService-Info.plist
 google-services.json
 firebase_app_id_file.json
