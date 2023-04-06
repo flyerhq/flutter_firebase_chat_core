@@ -138,9 +138,11 @@ class _RoomsPageState extends State<RoomsPage> {
 
   void initializeFlutterFire() async {
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+     //------------- This casues the black screen as async method can't be called from the initState
+
+      // await Firebase.initializeApp(
+      //   options: DefaultFirebaseOptions.currentPlatform,
+      // );
       FirebaseAuth.instance.authStateChanges().listen((User? user) {
         setState(() {
           _user = user;
