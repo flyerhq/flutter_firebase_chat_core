@@ -10,7 +10,16 @@ import 'util.dart';
 /// FirebaseChatCore.instance to aceess methods.
 class FirebaseChatCore {
   FirebaseChatCore._privateConstructor() {
+    firebaseUser = FirebaseAuth.instance.currentUser;
+
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      firebaseUser = user;
+    });
+  }
+  FirebaseChatCore._privateConstructorForSpecifiedFirebaseApp(FirebaseApp app) {
+    firebaseUser = FirebaseAuth.instanceFor(app: app).currentUser;
+
+    FirebaseAuth.instanceFor(app: app).authStateChanges().listen((User? user) {
       firebaseUser = user;
     });
   }
@@ -25,11 +34,23 @@ class FirebaseChatCore {
 
   /// Current logged in user in Firebase. Does not update automatically.
   /// Use [FirebaseAuth.authStateChanges] to listen to the state changes.
-  User? firebaseUser = FirebaseAuth.instance.currentUser;
+  User? firebaseUser;
 
   /// Singleton instance.
   static final FirebaseChatCore instance =
       FirebaseChatCore._privateConstructor();
+
+  /// Returns an instance using a specified [FirebaseApp].
+  static FirebaseChatCore instanceFor({required FirebaseApp app}) {
+    final instance =
+        FirebaseChatCore._privateConstructorForSpecifiedFirebaseApp(app);
+    instance.config = FirebaseChatCoreConfig(
+      app.name,
+      instance.config.roomsCollectionName,
+      instance.config.usersCollectionName,
+    );
+    return instance;
+  }
 
   /// Gets proper [FirebaseFirestore] instance.
   FirebaseFirestore getFirebaseFirestore() => config.firebaseAppName != null
