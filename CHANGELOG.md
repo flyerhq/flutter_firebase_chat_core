@@ -1,3 +1,7 @@
+## 1.6.7
+
+- Update dependencies. Requires Dart >= 2.19.0.
+
 ## 1.6.4
 
 - Update dependencies. Requires Dart >= 2.18.0.
