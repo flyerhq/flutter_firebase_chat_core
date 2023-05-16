@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 import 'chat.dart';
-import 'firebase_options.dart';
 import 'login.dart';
 import 'users.dart';
 import 'util.dart';
@@ -27,6 +25,61 @@ class _RoomsPageState extends State<RoomsPage> {
   void initState() {
     initializeFlutterFire();
     super.initState();
+  }
+
+  void initializeFlutterFire() async {
+    try {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) {
+        setState(() {
+          _user = user;
+        });
+      });
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  void logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  Widget _buildAvatar(types.Room room) {
+    var color = Colors.transparent;
+
+    if (room.type == types.RoomType.direct) {
+      try {
+        final otherUser = room.users.firstWhere(
+          (u) => u.id != _user!.uid,
+        );
+
+        color = getUserAvatarNameColor(otherUser);
+      } catch (e) {
+        // Do nothing if other user is not found.
+      }
+    }
+
+    final hasImage = room.imageUrl != null;
+    final name = room.name ?? '';
+
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: CircleAvatar(
+        backgroundColor: hasImage ? Colors.transparent : color,
+        backgroundImage: hasImage ? NetworkImage(room.imageUrl!) : null,
+        radius: 20,
+        child: !hasImage
+            ? Text(
+                name.isEmpty ? '' : name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.white),
+              )
+            : null,
+      ),
+    );
   }
 
   @override
@@ -133,66 +186,6 @@ class _RoomsPageState extends State<RoomsPage> {
                 );
               },
             ),
-    );
-  }
-
-  void initializeFlutterFire() async {
-    try {
-     //------------- This casues the black screen as async method can't be called from the initState
-
-      // await Firebase.initializeApp(
-      //   options: DefaultFirebaseOptions.currentPlatform,
-      // );
-      FirebaseAuth.instance.authStateChanges().listen((User? user) {
-        setState(() {
-          _user = user;
-        });
-      });
-      setState(() {
-        _initialized = true;
-      });
-    } catch (e) {
-      setState(() {
-        _error = true;
-      });
-    }
-  }
-
-  void logout() async {
-    await FirebaseAuth.instance.signOut();
-  }
-
-  Widget _buildAvatar(types.Room room) {
-    var color = Colors.transparent;
-
-    if (room.type == types.RoomType.direct) {
-      try {
-        final otherUser = room.users.firstWhere(
-          (u) => u.id != _user!.uid,
-        );
-
-        color = getUserAvatarNameColor(otherUser);
-      } catch (e) {
-        // Do nothing if other user is not found.
-      }
-    }
-
-    final hasImage = room.imageUrl != null;
-    final name = room.name ?? '';
-
-    return Container(
-      margin: const EdgeInsets.only(right: 16),
-      child: CircleAvatar(
-        backgroundColor: hasImage ? Colors.transparent : color,
-        backgroundImage: hasImage ? NetworkImage(room.imageUrl!) : null,
-        radius: 20,
-        child: !hasImage
-            ? Text(
-                name.isEmpty ? '' : name[0].toUpperCase(),
-                style: const TextStyle(color: Colors.white),
-              )
-            : null,
-      ),
     );
   }
 }

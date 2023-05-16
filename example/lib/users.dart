@@ -9,6 +9,41 @@ import 'util.dart';
 class UsersPage extends StatelessWidget {
   const UsersPage({super.key});
 
+  Widget _buildAvatar(types.User user) {
+    final color = getUserAvatarNameColor(user);
+    final hasImage = user.imageUrl != null;
+    final name = getUserName(user);
+
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: CircleAvatar(
+        backgroundColor: hasImage ? Colors.transparent : color,
+        backgroundImage: hasImage ? NetworkImage(user.imageUrl!) : null,
+        radius: 20,
+        child: !hasImage
+            ? Text(
+                name.isEmpty ? '' : name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.white),
+              )
+            : null,
+      ),
+    );
+  }
+
+  void _handlePressed(types.User otherUser, BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final room = await FirebaseChatCore.instance.createRoom(otherUser);
+
+    navigator.pop();
+    await navigator.push(
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          room: room,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -56,39 +91,4 @@ class UsersPage extends StatelessWidget {
           },
         ),
       );
-
-  Widget _buildAvatar(types.User user) {
-    final color = getUserAvatarNameColor(user);
-    final hasImage = user.imageUrl != null;
-    final name = getUserName(user);
-
-    return Container(
-      margin: const EdgeInsets.only(right: 16),
-      child: CircleAvatar(
-        backgroundColor: hasImage ? Colors.transparent : color,
-        backgroundImage: hasImage ? NetworkImage(user.imageUrl!) : null,
-        radius: 20,
-        child: !hasImage
-            ? Text(
-                name.isEmpty ? '' : name[0].toUpperCase(),
-                style: const TextStyle(color: Colors.white),
-              )
-            : null,
-      ),
-    );
-  }
-
-  void _handlePressed(types.User otherUser, BuildContext context) async {
-    final navigator = Navigator.of(context);
-    final room = await FirebaseChatCore.instance.createRoom(otherUser);
-
-    navigator.pop();
-    await navigator.push(
-      MaterialPageRoute(
-        builder: (context) => ChatPage(
-          room: room,
-        ),
-      ),
-    );
-  }
 }
