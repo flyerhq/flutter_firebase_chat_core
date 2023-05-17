@@ -39,7 +39,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_chat_types: ^3.6.1
-  flutter_chat_ui: ^1.6.7
+  flutter_chat_ui: ^1.6.8
   flutter_firebase_chat_core:
     path: ../
   http: ^0.13.6
