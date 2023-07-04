@@ -203,7 +203,7 @@ class FirebaseChatCore {
   }
 
   /// Creates [types.User] in Firebase to store name and avatar used on
-  /// rooms list
+  /// rooms list.
   Future<void> createUserInFirestore(types.User user) async {
     await getFirebaseFirestore()
         .collection(config.usersCollectionName)
@@ -327,7 +327,7 @@ class FirebaseChatCore {
   /// when the room changes or new messages come in
   /// 3) Create an Index (Firestore Database -> Indexes tab) where collection ID
   /// is `rooms`, field indexed are `userIds` (type Arrays) and `updatedAt`
-  /// (type Descending), query scope is `Collection`
+  /// (type Descending), query scope is `Collection`.
   Stream<List<types.Room>> rooms({bool orderByUpdatedAt = false}) {
     final fu = firebaseUser;
 

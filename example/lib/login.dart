@@ -25,6 +25,45 @@ class _LoginPageState extends State<LoginPage> {
     _usernameController = TextEditingController(text: '');
   }
 
+  void _login() async {
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _loggingIn = true;
+    });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _usernameController!.text,
+        password: _passwordController!.text,
+      );
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    } catch (e) {
+      setState(() {
+        _loggingIn = false;
+      });
+
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+          content: Text(
+            e.toString(),
+          ),
+          title: const Text('Error'),
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _focusNode?.dispose();
@@ -116,43 +155,4 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       );
-
-  void _login() async {
-    FocusScope.of(context).unfocus();
-
-    setState(() {
-      _loggingIn = true;
-    });
-
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _usernameController!.text,
-        password: _passwordController!.text,
-      );
-      if (!mounted) return;
-      Navigator.of(context).pop();
-    } catch (e) {
-      setState(() {
-        _loggingIn = false;
-      });
-
-      await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-          content: Text(
-            e.toString(),
-          ),
-          title: const Text('Error'),
-        ),
-      );
-    }
-  }
 }

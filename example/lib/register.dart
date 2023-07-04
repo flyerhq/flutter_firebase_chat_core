@@ -36,6 +36,57 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  void _register() async {
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _registering = true;
+    });
+
+    try {
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _usernameController!.text,
+        password: _passwordController!.text,
+      );
+      await FirebaseChatCore.instance.createUserInFirestore(
+        types.User(
+          firstName: _firstName,
+          id: credential.user!.uid,
+          imageUrl: 'https://i.pravatar.cc/300?u=$_email',
+          lastName: _lastName,
+        ),
+      );
+
+      if (!mounted) return;
+      Navigator.of(context)
+        ..pop()
+        ..pop();
+    } catch (e) {
+      setState(() {
+        _registering = false;
+      });
+
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+          content: Text(
+            e.toString(),
+          ),
+          title: const Text('Error'),
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _focusNode?.dispose();
@@ -116,55 +167,4 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       );
-
-  void _register() async {
-    FocusScope.of(context).unfocus();
-
-    setState(() {
-      _registering = true;
-    });
-
-    try {
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _usernameController!.text,
-        password: _passwordController!.text,
-      );
-      await FirebaseChatCore.instance.createUserInFirestore(
-        types.User(
-          firstName: _firstName,
-          id: credential.user!.uid,
-          imageUrl: 'https://i.pravatar.cc/300?u=$_email',
-          lastName: _lastName,
-        ),
-      );
-
-      if (!mounted) return;
-      Navigator.of(context)
-        ..pop()
-        ..pop();
-    } catch (e) {
-      setState(() {
-        _registering = false;
-      });
-
-      await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-          content: Text(
-            e.toString(),
-          ),
-          title: const Text('Error'),
-        ),
-      );
-    }
-  }
 }
