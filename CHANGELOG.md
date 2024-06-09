@@ -1,3 +1,7 @@
+## 1.6.8
+
+- **BREAKING CHANGE**: Update firebase to the latest SDK.
+
 ## 1.6.7
 
 - Update dependencies. Requires Dart >= 2.19.0.
